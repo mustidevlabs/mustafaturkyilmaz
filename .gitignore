@@ -1,0 +1,43 @@
+# Node
+node_modules/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Strapi
+backend/.tmp/
+backend/.cache/
+backend/build/
+backend/dist/
+backend/.strapi/
+backend/.strapi-updater.json
+backend/.strapi-cloud.json
+backend/exports/
+backend/license.txt
+backend/public/uploads/*
+!backend/public/uploads/.gitkeep
+backend/.database/*
+backend/database/migrations/*
+!backend/database/migrations/.gitkeep
+*.sqlite
+*.sqlite3
+
+# Next.js
+frontend/.next/
+frontend/out/
+frontend/.vercel/
+frontend/next-env.d.ts
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS / Editors
+.DS_Store
+.vscode/
+.idea/
+*.swp

@@ -1,0 +1,74 @@
+{
+  "kind": "collectionType",
+  "collectionName": "ledgeria_issues",
+  "info": {
+    "singularName": "ledgeria-issue",
+    "pluralName": "ledgeria-issues",
+    "displayName": "Ledgeria Issue",
+    "description": "Ingested feedback from Ledgeria desktop (POST /ledgeria/v1/issues)"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "clientId": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "maxLength": 64
+    },
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 500
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": ["bug", "feature", "improvement"],
+      "required": true
+    },
+    "appVersion": {
+      "type": "string",
+      "required": true,
+      "maxLength": 120
+    },
+    "os": {
+      "type": "string",
+      "required": true,
+      "maxLength": 2048
+    },
+    "clientCreatedAt": {
+      "type": "string",
+      "required": true,
+      "maxLength": 64
+    },
+    "locale": {
+      "type": "string",
+      "maxLength": 32
+    },
+    "lastScreen": {
+      "type": "string",
+      "maxLength": 2048
+    },
+    "logs": {
+      "type": "text"
+    },
+    "screenshotPath": {
+      "type": "string",
+      "maxLength": 2048
+    },
+    "screenshotPngBase64": {
+      "type": "text"
+    },
+    "priority": {
+      "type": "enumeration",
+      "enum": ["low", "normal", "high"],
+      "default": "normal"
+    }
+  }
+}
