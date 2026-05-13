@@ -145,96 +145,107 @@ function checkApiKey(ctx: Context) {
   }
 }
 
+function createLedgeriaIssuesHandler(strapi: Core.Strapi) {
+  return async (ctx: Context) => {
+    ctx.set('Content-Type', 'application/json');
+    try {
+      checkApiKey(ctx);
+
+      const idempotencyKey = ctx.get('idempotency-key');
+      const normalized = validateAndNormalize(ctx.request.body);
+
+      if (idempotencyKey && idempotencyKey.trim() !== normalized.id) {
+        throw jsonError(400, 'Idempotency-Key must match body.id');
+      }
+
+      const docs = strapi.documents(ISSUE_UID);
+      const existing = await docs.findFirst({
+        filters: { clientId: normalized.id },
+      });
+
+      if (existing && 'documentId' in existing && existing.documentId) {
+        ctx.status = 200;
+        ctx.body = { id: String(existing.documentId) };
+        return;
+      }
+
+      let remoteId: string;
+
+      try {
+        const created = await docs.create({
+          data: {
+            clientId: normalized.id,
+            title: normalized.title,
+            description: normalized.description,
+            category: normalized.category,
+            appVersion: normalized.appVersion,
+            os: normalized.os,
+            clientCreatedAt: normalized.createdAt,
+            locale: normalized.locale,
+            lastScreen: normalized.lastScreen,
+            logs: normalized.logs,
+            screenshotPath: normalized.screenshotPath,
+            screenshotPngBase64: normalized.screenshotPngBase64,
+            priority: normalized.priority,
+          },
+        });
+        remoteId =
+          created && typeof created === 'object' && 'documentId' in created && created.documentId
+            ? String(created.documentId)
+            : normalized.id;
+      } catch (createErr) {
+        if (!isUniqueConstraint(createErr)) {
+          throw createErr;
+        }
+        const again = await docs.findFirst({
+          filters: { clientId: normalized.id },
+        });
+        if (!again || !('documentId' in again) || !again.documentId) {
+          throw createErr;
+        }
+        remoteId = String(again.documentId);
+        ctx.status = 200;
+        ctx.body = { id: remoteId };
+        return;
+      }
+
+      ctx.status = 201;
+      ctx.body = { id: remoteId };
+    } catch (e: unknown) {
+      const err = e as Error & { status?: number; body?: { message: string } };
+      const status = typeof err.status === 'number' ? err.status : 500;
+      const message =
+        status === 500
+          ? 'Internal server error'
+          : err.message || 'Request failed';
+      ctx.status = status;
+      ctx.body = { message };
+      if (status === 500) {
+        strapi.log.error(err);
+      }
+    }
+  };
+}
+
+const routeConfig = { auth: false as const };
+
 /**
- * Registers POST /ledgeria/v1/issues on the root Koa router (no /api prefix), matching api.mustidev.com routing.
+ * Canonical: POST /ledgeria/v1/issues. Alias: POST /api/ledgeria/v1/issues (for clients that wrongly prefix /api).
  */
 export function registerLedgeriaIssueIngestion(strapi: Core.Strapi) {
+  const handler = createLedgeriaIssuesHandler(strapi);
   strapi.server.routes([
     {
       method: 'POST',
       path: '/ledgeria/v1/issues',
-      handler: async (ctx: Context) => {
-        ctx.set('Content-Type', 'application/json');
-        try {
-          checkApiKey(ctx);
-
-          const idempotencyKey = ctx.get('idempotency-key');
-          const normalized = validateAndNormalize(ctx.request.body);
-
-          if (idempotencyKey && idempotencyKey.trim() !== normalized.id) {
-            throw jsonError(400, 'Idempotency-Key must match body.id');
-          }
-
-          const docs = strapi.documents(ISSUE_UID);
-          const existing = await docs.findFirst({
-            filters: { clientId: normalized.id },
-          });
-
-          if (existing && 'documentId' in existing && existing.documentId) {
-            ctx.status = 200;
-            ctx.body = { id: String(existing.documentId) };
-            return;
-          }
-
-          let remoteId: string;
-
-          try {
-            const created = await docs.create({
-              data: {
-                clientId: normalized.id,
-                title: normalized.title,
-                description: normalized.description,
-                category: normalized.category,
-                appVersion: normalized.appVersion,
-                os: normalized.os,
-                clientCreatedAt: normalized.createdAt,
-                locale: normalized.locale,
-                lastScreen: normalized.lastScreen,
-                logs: normalized.logs,
-                screenshotPath: normalized.screenshotPath,
-                screenshotPngBase64: normalized.screenshotPngBase64,
-                priority: normalized.priority,
-              },
-            });
-            remoteId =
-              created && typeof created === 'object' && 'documentId' in created && created.documentId
-                ? String(created.documentId)
-                : normalized.id;
-          } catch (createErr) {
-            if (!isUniqueConstraint(createErr)) {
-              throw createErr;
-            }
-            const again = await docs.findFirst({
-              filters: { clientId: normalized.id },
-            });
-            if (!again || !('documentId' in again) || !again.documentId) {
-              throw createErr;
-            }
-            remoteId = String(again.documentId);
-            ctx.status = 200;
-            ctx.body = { id: remoteId };
-            return;
-          }
-
-          ctx.status = 201;
-          ctx.body = { id: remoteId };
-        } catch (e: unknown) {
-          const err = e as Error & { status?: number; body?: { message: string } };
-          const status = typeof err.status === 'number' ? err.status : 500;
-          const message =
-            status === 500
-              ? 'Internal server error'
-              : err.message || 'Request failed';
-          ctx.status = status;
-          ctx.body = { message };
-          if (status === 500) {
-            strapi.log.error(err);
-          }
-        }
-      },
-      config: {
-        auth: false,
-      },
+      handler,
+      config: routeConfig,
+    },
+    {
+      method: 'POST',
+      path: '/api/ledgeria/v1/issues',
+      handler,
+      config: routeConfig,
     },
   ]);
 }

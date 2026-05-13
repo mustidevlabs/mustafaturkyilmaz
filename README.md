@@ -53,7 +53,7 @@ Schemas live under `backend/src/api/<name>/content-types/<name>/schema.json`. St
 
 ## Ledgeria issue ingestion (optional)
 
-The backend exposes **`POST /ledgeria/v1/issues`** at the **root** URL (not under `/api`), for the Ledgeria desktop client contract. Issues are stored in the **Ledgeria Issue** collection type.
+The backend accepts **`POST /ledgeria/v1/issues`** (canonical, no `/api` prefix) and **`POST /api/ledgeria/v1/issues`** as an alias if a client wrongly prefixes `/api`.
 
 - Optional auth: set **`LEDGERIA_ISSUES_API_KEY`** in `backend/.env` and send `Authorization: Bearer <key>` or `X-API-Key: <key>`.
 - In production (`api.mustidev.com`), route this path to the same Strapi process (or proxy) as in the client.
@@ -64,6 +64,10 @@ The backend exposes **`POST /ledgeria/v1/issues`** at the **root** URL (not unde
 - `frontend/src/types/strapi.ts` — Types for Project / Skill / About / `StrapiResponse`.
 - `frontend/src/app/page.tsx` — Home: loads About, Projects, Skills; shows a friendly message if Strapi is down.
 - `frontend/next.config.ts` — `next/image` allows Strapi `localhost:1337/uploads/**`.
+
+## Strapi Cloud (monorepo)
+
+Strapi runs from **`backend/`**. In Strapi Cloud, use **Existing Strapi project**, then open **Show advanced settings** and set **Base directory** to `backend` so dependency checks, install, and `strapi build` use `backend/package.json` and the Strapi `config/` + `src/` tree.
 
 ## Production notes
 
