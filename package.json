@@ -20,6 +20,20 @@
     "start:admin": "npm run start -w admin-web",
     "check:strapi": "node scripts/check-strapi-cloud.mjs"
   },
+  "dependencies": {
+    "js-yaml": "^4.1.1"
+  },
+  "overrides": {
+    "@strapi/admin": "5.44.0",
+    "@strapi/core": "5.44.0",
+    "@strapi/data-transfer": "5.44.0",
+    "@strapi/database": "5.44.0",
+    "@strapi/logger": "5.44.0",
+    "@strapi/permissions": "5.44.0",
+    "@strapi/types": "5.44.0",
+    "@strapi/typescript-utils": "5.44.0",
+    "@strapi/utils": "5.44.0"
+  },
   "devDependencies": {
     "concurrently": "^9.0.1"
   },
