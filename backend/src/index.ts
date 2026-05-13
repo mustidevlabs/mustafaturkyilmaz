@@ -1,6 +1,6 @@
 import type { Core } from '@strapi/strapi';
 
-import { registerLedgeriaIssueIngestion } from './lib/ledgeria/issue-ingestion';
+import { registerLedgeriaIssueIngestion } from './ledgeria/issue-ingestion';
 
 export default {
   /**

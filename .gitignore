@@ -6,7 +6,7 @@ node_modules/
 .env.local
 .env.*.local
 
-# Strapi
+# Strapi (backend/ — workspace ledgeria-api)
 backend/.tmp/
 backend/.cache/
 backend/build/
@@ -24,11 +24,17 @@ backend/database/migrations/*
 *.sqlite
 *.sqlite3
 
-# Next.js
-frontend/.next/
-frontend/out/
-frontend/.vercel/
-frontend/next-env.d.ts
+# Next.js (admin-web)
+apps/admin-web/.next/
+apps/admin-web/out/
+apps/admin-web/.vercel/
+apps/admin-web/next-env.d.ts
+
+# Next.js (portfolio-web)
+apps/portfolio-web/.next/
+apps/portfolio-web/out/
+apps/portfolio-web/.vercel/
+apps/portfolio-web/next-env.d.ts
 
 # Logs
 *.log

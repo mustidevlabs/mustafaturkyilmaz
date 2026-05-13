@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { fetchStrapi, strapiMedia } from "@/lib/strapi";
+import { fetchStrapi, strapiMedia, STRAPI_PUBLIC_URL } from "@/lib/strapi";
 import type { About, Project, Skill, StrapiResponse } from "@/types/strapi";
 
 async function getAbout() {
@@ -47,6 +47,7 @@ export default async function Home() {
   ]);
 
   const strapiUp = about !== null || projects.length > 0 || skills.length > 0;
+  const strapiAdminUrl = `${STRAPI_PUBLIC_URL.replace(/\/$/, "")}/admin`;
 
   return (
     <main className="mx-auto flex min-h-screen max-w-5xl flex-col gap-16 px-6 py-16">
@@ -66,25 +67,23 @@ export default async function Home() {
         )}
         {!strapiUp && (
           <div className="rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-200">
-            <p className="font-medium">Strapi&apos;ye baglanilamiyor.</p>
+            <p className="font-medium">Could not load content from Strapi.</p>
             <p className="mt-1">
-              Backend&apos;i baslat:{" "}
-              <code className="rounded bg-amber-100 px-1 py-0.5 dark:bg-amber-900">
-                cd backend &amp;&amp; npm run develop
-              </code>
-            </p>
-            <p className="mt-1">
-              Sonra{" "}
+              Open{" "}
               <a
-                href="http://localhost:1337/admin"
+                href={strapiAdminUrl}
                 className="underline"
                 target="_blank"
                 rel="noreferrer"
               >
-                http://localhost:1337/admin
+                Strapi admin
               </a>{" "}
-              uzerinden About / Project / Skill icerigini gir ve Public role
-              icin find/findOne yetkilerini ac.
+              to add content and check Public role permissions. For a different
+              Strapi host, set{" "}
+              <code className="rounded bg-amber-100 px-1 py-0.5 dark:bg-amber-900">
+                NEXT_PUBLIC_STRAPI_URL
+              </code>
+              .
             </p>
           </div>
         )}
@@ -93,12 +92,12 @@ export default async function Home() {
       {projects.length > 0 && (
         <section className="flex flex-col gap-6">
           <div className="flex items-baseline justify-between">
-            <h2 className="text-2xl font-semibold tracking-tight">Projeler</h2>
+            <h2 className="text-2xl font-semibold tracking-tight">Projects</h2>
             <Link
               href="/projects"
               className="text-sm text-zinc-600 hover:underline dark:text-zinc-400"
             >
-              Hepsini gor →
+              View all →
             </Link>
           </div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -147,7 +146,7 @@ export default async function Home() {
 
       {skills.length > 0 && (
         <section className="flex flex-col gap-4">
-          <h2 className="text-2xl font-semibold tracking-tight">Yetkinlikler</h2>
+          <h2 className="text-2xl font-semibold tracking-tight">Skills</h2>
           <ul className="flex flex-wrap gap-2">
             {skills.map((s) => (
               <li

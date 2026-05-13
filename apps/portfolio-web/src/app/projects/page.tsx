@@ -3,7 +3,7 @@ import { fetchStrapi, strapiMedia } from "@/lib/strapi";
 import type { Project, StrapiResponse } from "@/types/strapi";
 
 export const metadata = {
-  title: "Projeler — Portfolio",
+  title: "Projects — Portfolio",
 };
 
 async function getAllProjects() {
@@ -26,19 +26,19 @@ export default async function ProjectsPage() {
   return (
     <main className="mx-auto flex min-h-screen max-w-5xl flex-col gap-8 px-6 py-16">
       <div className="flex items-baseline justify-between">
-        <h1 className="text-3xl font-semibold tracking-tight">Tum Projeler</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">All projects</h1>
         <Link
           href="/"
           className="text-sm text-zinc-600 hover:underline dark:text-zinc-400"
         >
-          ← Ana sayfa
+          ← Home
         </Link>
       </div>
 
       {projects.length === 0 ? (
         <p className="text-zinc-600 dark:text-zinc-400">
-          Henuz proje yok. Strapi admin panelinde proje ekledikten sonra burada
-          gozukecek.
+          No projects yet. Add projects in Strapi admin; they will appear here
+          after publish.
         </p>
       ) : (
         <ul className="flex flex-col gap-6">

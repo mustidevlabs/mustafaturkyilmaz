@@ -1,19 +1,27 @@
 {
-  "name": "mustafaturkyilmaz-portfolio",
+  "name": "mustafaturkyilmaz",
   "version": "0.1.0",
   "private": true,
-  "description": "Monorepo: Strapi CMS (backend) + Next.js (frontend)",
+  "description": "Monorepo: shared Strapi backend + portfolio + admin + Ledgeria routes",
+  "workspaces": [
+    "apps/*",
+    "backend"
+  ],
   "scripts": {
-    "install:all": "npm install --prefix backend && npm install --prefix frontend",
-    "dev": "concurrently -n backend,frontend -c blue,magenta \"npm:dev:backend\" \"npm:dev:frontend\"",
-    "dev:backend": "npm run develop --prefix backend",
-    "dev:frontend": "npm run dev --prefix frontend",
-    "build": "npm run build --prefix backend && npm run build --prefix frontend",
-    "start": "concurrently -n backend,frontend -c blue,magenta \"npm:start:backend\" \"npm:start:frontend\"",
-    "start:backend": "npm run start --prefix backend",
-    "start:frontend": "npm run start --prefix frontend"
+    "dev": "concurrently -n ledgeria-api,portfolio,admin -c blue,magenta,green \"npm run dev -w ledgeria-api\" \"npm run dev -w portfolio-web\" \"npm run dev -w admin-web\"",
+    "dev:ledgeria-api": "npm run dev -w ledgeria-api",
+    "dev:backend": "npm run dev -w ledgeria-api",
+    "dev:portfolio": "npm run dev -w portfolio-web",
+    "dev:admin": "npm run dev -w admin-web",
+    "build": "npm run build -w ledgeria-api && npm run build -w portfolio-web && npm run build -w admin-web",
+    "start": "concurrently -n ledgeria-api,portfolio,admin -c blue,magenta,green \"npm run start -w ledgeria-api\" \"npm run start -w portfolio-web\" \"npm run start -w admin-web\"",
+    "start:ledgeria-api": "npm run start -w ledgeria-api",
+    "start:portfolio": "npm run start -w portfolio-web",
+    "start:admin": "npm run start -w admin-web",
+    "check:strapi": "node scripts/check-strapi-cloud.mjs"
   },
   "devDependencies": {
     "concurrently": "^9.0.1"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

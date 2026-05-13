@@ -1,3 +1,11 @@
+This is the **`portfolio-web`** workspace (`apps/portfolio-web`) in the monorepo. From the repo root use `npm run dev:portfolio`.
+
+## Backend (content)
+
+Portfolio **content** (projects, skills, about, media) is stored in **Strapi**, in **`backend/`** (npm workspace **`ledgeria-api`**). This Next app is only the public frontend; it talks to that API via `NEXT_PUBLIC_STRAPI_URL` and `src/lib/strapi.ts`. There is no separate portfolio-only backend in this repo.
+
+---
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started

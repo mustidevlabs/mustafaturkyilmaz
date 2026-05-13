@@ -6,6 +6,12 @@ const ISSUE_UID = 'api::ledgeria-issue.ledgeria-issue' as const;
 const MAX_SCREENSHOT_B64 = 600_000;
 const MAX_LOGS = 120_000;
 
+/** Must match `docs/ledgeria-issues-api-v1-contract.md` / `@ledgeria/shared`. */
+const ISSUE_SCREENSHOT_PIN_LIMIT = 12;
+const ISSUE_SCREENSHOT_PIN_MESSAGE_MAX_CHARS = 400;
+
+export type IssueScreenshotPin = { x: number; y: number; message: string };
+
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -111,6 +117,8 @@ function validateAndNormalize(body: unknown) {
     screenshotPngBase64 = screenshotRaw;
   }
 
+  const screenshotPins = parseScreenshotPins(p, screenshotPngBase64);
+
   return {
     id,
     title,
@@ -125,7 +133,71 @@ function validateAndNormalize(body: unknown) {
     logs,
     screenshotPath: optionalString(p.screenshotPath, 2048),
     screenshotPngBase64,
+    screenshotPins,
   };
+}
+
+function parseScreenshotPins(
+  p: IssuePayloadInput,
+  screenshotPngBase64: string | undefined
+): IssueScreenshotPin[] | undefined {
+  const raw = p.screenshotPins;
+  if (raw === undefined || raw === null) return undefined;
+  if (Array.isArray(raw) && raw.length === 0) return undefined;
+  if (!Array.isArray(raw)) {
+    throw jsonError(400, 'screenshotPins must be an array');
+  }
+  if (raw.length > ISSUE_SCREENSHOT_PIN_LIMIT) {
+    throw jsonError(
+      400,
+      `screenshotPins must contain at most ${ISSUE_SCREENSHOT_PIN_LIMIT} items`
+    );
+  }
+
+  const ss = screenshotPngBase64?.trim();
+  const ssMeaningful = Boolean(ss && ss.length >= 32);
+  if (raw.length > 0 && !ssMeaningful) {
+    throw jsonError(
+      400,
+      'screenshotPngBase64 is required when screenshotPins is non-empty'
+    );
+  }
+
+  const out: IssueScreenshotPin[] = [];
+  for (let i = 0; i < raw.length; i += 1) {
+    const el = raw[i];
+    if (el === null || typeof el !== 'object' || Array.isArray(el)) {
+      throw jsonError(400, `screenshotPins[${i}] must be an object`);
+    }
+    const o = el as Record<string, unknown>;
+    if (typeof o.x !== 'number' || typeof o.y !== 'number') {
+      throw jsonError(400, `screenshotPins[${i}].x and .y must be numbers`);
+    }
+    if (!Number.isFinite(o.x) || !Number.isFinite(o.y)) {
+      throw jsonError(400, `screenshotPins[${i}] has non-finite coordinates`);
+    }
+    if (o.x < 0 || o.x > 1 || o.y < 0 || o.y > 1) {
+      throw jsonError(
+        400,
+        `screenshotPins[${i}] coordinates must be between 0 and 1 inclusive`
+      );
+    }
+    if (typeof o.message !== 'string') {
+      throw jsonError(400, `screenshotPins[${i}].message must be a string`);
+    }
+    const msg = o.message.trim();
+    if (!msg) {
+      throw jsonError(400, `screenshotPins[${i}].message must not be empty`);
+    }
+    if (msg.length > ISSUE_SCREENSHOT_PIN_MESSAGE_MAX_CHARS) {
+      throw jsonError(
+        400,
+        `screenshotPins[${i}].message exceeds maximum length (${ISSUE_SCREENSHOT_PIN_MESSAGE_MAX_CHARS})`
+      );
+    }
+    out.push({ x: o.x, y: o.y, message: msg });
+  }
+  return out.length > 0 ? out : undefined;
 }
 
 function checkApiKey(ctx: Context) {
@@ -152,7 +224,8 @@ function createLedgeriaIssuesHandler(strapi: Core.Strapi) {
       checkApiKey(ctx);
 
       const idempotencyKey = ctx.get('idempotency-key');
-      const normalized = validateAndNormalize(ctx.request.body);
+      const rawBody = (ctx.request as { body?: unknown }).body;
+      const normalized = validateAndNormalize(rawBody);
 
       if (idempotencyKey && idempotencyKey.trim() !== normalized.id) {
         throw jsonError(400, 'Idempotency-Key must match body.id');
@@ -186,7 +259,9 @@ function createLedgeriaIssuesHandler(strapi: Core.Strapi) {
             logs: normalized.logs,
             screenshotPath: normalized.screenshotPath,
             screenshotPngBase64: normalized.screenshotPngBase64,
+            screenshotPins: normalized.screenshotPins ?? null,
             priority: normalized.priority,
+            status: 'open',
           },
         });
         remoteId =

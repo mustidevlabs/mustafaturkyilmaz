@@ -16,16 +16,12 @@
     "rootDir": "."
   },
   "include": [
-    // Include root files
-    "./",
-    // Include all ts files
-    "./**/*.ts",
-    // Include all js files
-    "./**/*.js",
-    // Force the JSON files in the src folder to be included
-    "src/**/*.json"
+    "config/**/*.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.json",
+    "types/**/*.d.ts"
   ],
-
   "exclude": [
     "node_modules/",
     "build/",
@@ -33,12 +29,8 @@
     ".cache/",
     ".tmp/",
     ".strapi/",
-
-    // Do not include admin files in the server compilation
     "src/admin/",
-    // Do not include test files
     "**/*.test.*",
-    // Do not include plugins in the server compilation
     "src/plugins/**"
   ]
 }

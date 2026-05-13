@@ -5,7 +5,7 @@
     "singularName": "ledgeria-issue",
     "pluralName": "ledgeria-issues",
     "displayName": "Ledgeria Issue",
-    "description": "Ingested feedback from Ledgeria desktop (POST /ledgeria/v1/issues)"
+    "description": "Ledgeria desktop feedback (separate from portfolio content). Ingested via POST /ledgeria/v1/issues; see backend/src/ledgeria/."
   },
   "options": {
     "draftAndPublish": false
@@ -65,10 +65,18 @@
     "screenshotPngBase64": {
       "type": "text"
     },
+    "screenshotPins": {
+      "type": "json"
+    },
     "priority": {
       "type": "enumeration",
       "enum": ["low", "normal", "high"],
       "default": "normal"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["open", "triaged", "in_progress", "resolved", "closed"],
+      "default": "open"
     }
   }
 }

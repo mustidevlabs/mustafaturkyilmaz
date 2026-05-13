@@ -520,11 +520,16 @@ export interface ApiLedgeriaIssueLedgeriaIssue
     priority: Schema.Attribute.Enumeration<['low', 'normal', 'high']> &
       Schema.Attribute.DefaultTo<'normal'>;
     publishedAt: Schema.Attribute.DateTime;
+    status: Schema.Attribute.Enumeration<
+      ['open', 'triaged', 'in_progress', 'resolved', 'closed']
+    > &
+      Schema.Attribute.DefaultTo<'open'>;
     screenshotPath: Schema.Attribute.String &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 2048;
       }>;
     screenshotPngBase64: Schema.Attribute.Text;
+    screenshotPins: Schema.Attribute.JSON;
     title: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.SetMinMaxLength<{

@@ -1,18 +1,24 @@
 /**
- * Strapi 5 REST API icin minimal helper.
+ * Minimal helper for Strapi 5 REST API.
  *
- * Strapi 5'te response formati duzlestirildi:
+ * Defaults to Strapi Cloud; set `NEXT_PUBLIC_STRAPI_URL` for a local or other
+ * Strapi instance. Portfolio content (Project, Skill, About) is loaded from
+ * that Strapi project.
+ *
+ * Strapi 5 flattened responses:
  *   { data: [{ id, documentId, ...attributes }] }
  *
- * Public endpoint'lere erisim icin Strapi admin panelinde
- *   Settings -> Users & Permissions Plugin -> Roles -> Public
- * altinda ilgili content type'larda 'find' ve 'findOne' yetkisini ac.
+ * For public endpoints, enable `find` / `findOne` in Strapi admin under
+ * Settings → Users & Permissions → Roles → Public for the relevant types.
  *
- * Veya .env.local icine STRAPI_API_TOKEN koy.
+ * Alternatively set `STRAPI_API_TOKEN` in `.env.local`.
  */
 
-const STRAPI_URL =
-  process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
+export const STRAPI_PUBLIC_URL =
+  process.env.NEXT_PUBLIC_STRAPI_URL?.trim() ||
+  "https://timely-spirit-9e046731e1.strapiapp.com";
+
+const STRAPI_URL = STRAPI_PUBLIC_URL;
 
 const STRAPI_TOKEN = process.env.STRAPI_API_TOKEN;
 
@@ -45,6 +51,9 @@ export async function fetchStrapi<T>(
 
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
+    Accept: "application/json",
+    "User-Agent":
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
     ...(init?.headers as Record<string, string> | undefined),
   };
 
@@ -68,9 +77,7 @@ export async function fetchStrapi<T>(
   return (await res.json()) as T;
 }
 
-/**
- * Strapi'den dondurulen image URL'lerini absolute hale getirir.
- */
+/** Resolve relative Strapi media URLs to absolute URLs. */
 export function strapiMedia(url?: string | null): string | null {
   if (!url) return null;
   if (/^https?:\/\//i.test(url)) return url;

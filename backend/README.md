@@ -1,5 +1,23 @@
 # 🚀 Getting started with Strapi
 
+## In this monorepo (single backend)
+
+This Strapi app (**workspace `ledgeria-api`**, repo folder **`backend/`**) is the **one HTTP API + CMS** for:
+
+| Consumer | What it uses |
+|----------|----------------|
+| **portfolio-web** | REST: `Project`, `Skill`, `About` (and uploads). Optional `STRAPI_API_TOKEN` if Public permissions are tight. |
+| **admin-web** | REST: internal tools (e.g. `ledgeria-issue` updates); uses a token with appropriate scopes. |
+| **Ledgeria desktop** | Custom route: `POST /ledgeria/v1/issues` → persists to `ledgeria-issue`. |
+
+You do **not** add a second backend for the portfolio: extend content types and permissions here; both Next apps point at the same `NEXT_PUBLIC_STRAPI_URL`.
+
+Strapi Cloud: set the repository **root / base directory** to **`backend`** (this folder).
+
+From repo root: `npm run dev:ledgeria-api`.
+
+---
+
 Strapi comes with a full featured [Command Line Interface](https://docs.strapi.io/dev-docs/cli) (CLI) which lets you scaffold and manage your project in seconds.
 
 ### `develop`

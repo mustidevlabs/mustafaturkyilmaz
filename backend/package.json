@@ -1,8 +1,8 @@
 {
-  "name": "backend",
+  "name": "ledgeria-api",
   "version": "0.1.0",
   "private": true,
-  "description": "A Strapi application",
+  "description": "Strapi 5 — shared backend: portfolio CMS + Ledgeria issues + custom HTTP routes",
   "scripts": {
     "build": "strapi build",
     "console": "strapi console",

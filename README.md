@@ -1,84 +1,113 @@
-# Mustafa Turkyilmaz — Portfolio (Strapi + Next.js)
+# Mustafa Turkyilmaz — Monorepo
 
-Personal portfolio app. Monorepo layout:
+**npm workspaces:** `apps/*` (Next frontends) and **`backend/`** (Strapi). **One Strapi app** (workspace `ledgeria-api` in folder **`backend/`**) serves the **portfolio** site, **admin** console, and **Ledgeria** issue ingestion. Strapi Cloud: set the repo **base directory** to **`backend`**.
 
 ```
 mustafaturkyilmaz/
-├── backend/    # Strapi 5 CMS (TypeScript + SQLite)
-├── frontend/   # Next.js 16 (App Router + TypeScript + Tailwind v4)
-└── package.json # run both apps with one command
+├── apps/
+│   ├── portfolio-web/   # Next.js 16 — public portfolio (reads Strapi)
+│   ├── admin-web/       # Next.js 16 — internal admin
+│   └── README.md
+├── backend/             # Strapi 5 — shared API (portfolio CMS + Ledgeria + REST)
+├── ledgeria/            # Ledgeria product notes (cross-app)
+├── packages/            # Reserved for future shared packages (not a workspace yet)
+└── package.json         # workspaces: ["apps/*", "backend"]
 ```
 
-## Quick start
+## Architecture (single backend)
 
-Use **Node 20+** (required for Strapi 5).
+| Layer | Location | Role |
+|-------|----------|------|
+| Backend | **`backend/`** (`ledgeria-api`) | Strapi: portfolio content types, media, `ledgeria-issue`, custom HTTP for Ledgeria client. |
+| Frontends | **`apps/portfolio-web`**, **`apps/admin-web`** | Next.js; both use `NEXT_PUBLIC_STRAPI_URL` → the same Strapi instance. |
+
+Future shared TypeScript (e.g. API types) can live under `packages/` when needed; data stays in one Strapi project.
+
+## Install
+
+From the **repository root**:
 
 ```bash
-# 1) Install dependencies (from repo root)
-npm install                # root: concurrently, etc.
-npm run install:all        # backend + frontend node_modules
-
-# 2) Run both apps in parallel
-npm run dev
+npm install
 ```
 
-This starts:
+## Run
 
-- Strapi: http://localhost:1337 (admin: http://localhost:1337/admin)
-- Next.js: http://localhost:3000
+| Command | What it does |
+|---------|----------------|
+| `npm run dev` | Strapi + portfolio + admin together |
+| `npm run dev:ledgeria-api` | Only Strapi (`backend/`, workspace `ledgeria-api`) |
+| `npm run dev:backend` | Same as `dev:ledgeria-api` (Strapi in `backend/`) |
+| `npm run dev:portfolio` | Only portfolio (`apps/portfolio-web`, port **3000**) |
+| `npm run dev:admin` | Only admin (`apps/admin-web`, port **3002**) |
 
-> On first launch, Strapi will prompt you to create an admin user.
+You can also `cd backend && npm run develop` or `cd apps/portfolio-web && npm run dev`.
 
-## After first setup
+Default URLs: Strapi API **https://timely-spirit-9e046731e1.strapiapp.com** (override with `NEXT_PUBLIC_STRAPI_URL`), portfolio **http://localhost:3000**, admin **http://localhost:3002**. Local Strapi in `backend/` is optional.
 
-1. Open the Strapi admin → **Settings → Users & Permissions Plugin → Roles → Public**.
-2. Enable `find` and `findOne` for these content types:
-   - Project
-   - Skill
-   - About
-3. Open **Content Manager**, fill **About**, then add some **Projects** and **Skills**. Do not forget **Save** and **Publish**.
-4. Refresh the frontend → `http://localhost:3000` should show live data.
+---
 
-Instead of opening public permissions, you can create a read-only token under **Settings → API Tokens → Create new** and set `STRAPI_API_TOKEN=...` in `frontend/.env.local`.
+## Portfolio (public site)
 
-## Content types
+Content lives in Strapi; the Next app is the renderer (`src/lib/strapi.ts` → `backend/`).
+
+### After first Strapi setup
+
+1. Strapi admin → **Settings → Users & Permissions → Roles → Public**.
+2. Enable `find` and `findOne` for **Project**, **Skill**, **About**.
+3. **Content Manager**: fill **About**, add **Projects** and **Skills**; **Save** + **Publish**.
+4. Reload http://localhost:3000
+
+Optional: **Settings → API Tokens** → read-only token → `apps/portfolio-web/.env.local` as `STRAPI_API_TOKEN=...`.
+
+### Portfolio content types
 
 | Type | Kind | Description |
 |---|---|---|
-| `Project` | collection | Portfolio projects — title, slug, summary, description, cover, gallery, technologies (JSON), liveUrl, repoUrl, featured, order |
-| `Skill` | collection | Skills — name, category (Frontend/Backend/Database/DevOps/Tooling/Other), level (0-100), icon, order |
-| `About` | single type | Profile — fullName, headline, bio, email, location, avatar, resume, GitHub/LinkedIn/Twitter/website URLs |
+| `Project` | collection | Portfolio projects |
+| `Skill` | collection | Skills |
+| `About` | single type | Profile |
 
-Schemas live under `backend/src/api/<name>/content-types/<name>/schema.json`. Strapi picks them up on boot; you can also edit fields in the admin UI.
+Schemas: `backend/src/api/<name>/content-types/<name>/schema.json`.
 
-## Ledgeria issue ingestion (optional)
+### Next.js (portfolio)
 
-The backend accepts **`POST /ledgeria/v1/issues`** (canonical, no `/api` prefix) and **`POST /api/ledgeria/v1/issues`** as an alias if a client wrongly prefixes `/api`.
+- `apps/portfolio-web/src/lib/strapi.ts` — `fetchStrapi<T>()`, `strapiMedia()` (Strapi = `backend/`)
+- `apps/portfolio-web/src/app/page.tsx` — home
+- `apps/portfolio-web/next.config.ts` — Strapi image `remotePatterns`
 
-- Optional auth: set **`LEDGERIA_ISSUES_API_KEY`** in `backend/.env` and send `Authorization: Bearer <key>` or `X-API-Key: <key>`.
-- In production (`api.mustidev.com`), route this path to the same Strapi process (or proxy) as in the client.
+---
 
-## Frontend layout
+## Ledgeria (desktop product slice)
 
-- `frontend/src/lib/strapi.ts` — Strapi REST helpers: `fetchStrapi<T>()`, `strapiMedia()`.
-- `frontend/src/types/strapi.ts` — Types for Project / Skill / About / `StrapiResponse`.
-- `frontend/src/app/page.tsx` — Home: loads About, Projects, Skills; shows a friendly message if Strapi is down.
-- `frontend/next.config.ts` — `next/image` allows Strapi `localhost:1337/uploads/**`.
+| Piece | Location |
+|-------|----------|
+| HTTP ingestion | `backend/src/ledgeria/issue-ingestion.ts` |
+| Strapi collection | `backend/src/api/ledgeria-issue/` |
+| Issues inbox (internal UI) | **http://localhost:3002** — `apps/admin-web` |
 
-## Strapi Cloud (monorepo)
+More: **`ledgeria/README.md`**, **`backend/src/ledgeria/README.md`**.
 
-Strapi runs from **`backend/`**. In Strapi Cloud, use **Existing Strapi project**, then open **Show advanced settings** and set **Base directory** to `backend` so dependency checks, install, and `strapi build` use `backend/package.json` and the Strapi `config/` + `src/` tree.
+- Optional: **`LEDGERIA_ISSUES_API_KEY`** in `backend/.env`.
+- Admin issues UI: **`STRAPI_API_TOKEN`** + **`NEXT_PUBLIC_STRAPI_URL`** in `apps/admin-web/.env.local`.
 
-## Production notes
+---
 
-- Prefer **PostgreSQL** over SQLite for Strapi (`backend/config/database.ts` and env).
-- Host the frontend on Vercel (or similar) and Strapi on a VPS, **Strapi Cloud**, Render, Railway, etc.
-- Set `NEXT_PUBLIC_STRAPI_URL` in `frontend/.env.local` to the production Strapi URL.
-- Update `next.config.ts` `image.remotePatterns` to include your production Strapi hostname.
+## Strapi Cloud
 
-## Why this stack?
+**Base directory:** **`backend`** (this folder in the Git repo; matches Strapi Cloud “root directory” for the backend app).
 
-- **Strapi 5**: TypeScript-first headless CMS with a built-in admin.
-- **Next.js 16** App Router + Server Components: server-side fetch for SEO and performance.
-- **Tailwind v4**: low-config styling.
-- **One monorepo**: simple backups and a single `npm run dev`.
+**Production API (default):** `https://timely-spirit-9e046731e1.strapiapp.com` — `portfolio-web` and `admin-web` use this URL in code; override with `NEXT_PUBLIC_STRAPI_URL` for other environments.
+
+---
+
+## Production
+
+- Strapi: PostgreSQL in production; set env on host.
+- Next apps: `NEXT_PUBLIC_STRAPI_URL` and image `remotePatterns` for your Strapi host.
+
+---
+
+## Stack
+
+Strapi 5 + Next.js 16 + Tailwind v4; workspaces keep **ledgeria-api** (`backend/`), **portfolio-web**, and **admin-web** runnable on their own.
