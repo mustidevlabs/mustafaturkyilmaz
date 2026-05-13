@@ -1,72 +1,80 @@
 # Mustafa Turkyilmaz — Portfolio (Strapi + Next.js)
 
-Kisisel portfolio uygulamasi. Monorepo seklinde:
+Personal portfolio app. Monorepo layout:
 
 ```
 mustafaturkyilmaz/
 ├── backend/    # Strapi 5 CMS (TypeScript + SQLite)
 ├── frontend/   # Next.js 16 (App Router + TypeScript + Tailwind v4)
-└── package.json # iki projeyi tek komutla calistirmak icin
+└── package.json # run both apps with one command
 ```
 
-## Hizli baslangic
+## Quick start
 
-Once Node 20+ kurulu oldugundan emin ol (Strapi 5 icin gerekli).
+Use **Node 20+** (required for Strapi 5).
 
 ```bash
-# 1) Bagimliliklari kur (kok dizinde)
-npm install                # root concurrently icin
+# 1) Install dependencies (from repo root)
+npm install                # root: concurrently, etc.
 npm run install:all        # backend + frontend node_modules
 
-# 2) Iki projeyi de paralel baslat
+# 2) Run both apps in parallel
 npm run dev
 ```
 
-Bu komut sunlari calistirir:
-- Strapi: http://localhost:1337  (admin: http://localhost:1337/admin)
+This starts:
+
+- Strapi: http://localhost:1337 (admin: http://localhost:1337/admin)
 - Next.js: http://localhost:3000
 
-> Ilk baslatmada Strapi seni admin kullanici olusturmaya yonlendirir.
+> On first launch, Strapi will prompt you to create an admin user.
 
-## Ilk kurulumdan sonra yapmalik
+## After first setup
 
-1. Strapi admin paneline gir → **Settings → Users & Permissions Plugin → Roles → Public**.
-2. Su content type'larda `find` ve `findOne` yetkisini ac:
+1. Open the Strapi admin → **Settings → Users & Permissions Plugin → Roles → Public**.
+2. Enable `find` and `findOne` for these content types:
    - Project
    - Skill
    - About
-3. **Content Manager**'a gec ve once About icerigini doldur, sonra birkac Project ve Skill ekle. **Save** + **Publish** unutma.
-4. Frontend'i yenile → `http://localhost:3000` artik canli veri gostermeli.
+3. Open **Content Manager**, fill **About**, then add some **Projects** and **Skills**. Do not forget **Save** and **Publish**.
+4. Refresh the frontend → `http://localhost:3000` should show live data.
 
-Alternatif olarak public yetki acmak yerine Strapi'de **Settings → API Tokens → Create new** ile read-only token uretip frontend tarafinda `frontend/.env.local` icine `STRAPI_API_TOKEN=...` koyabilirsin.
+Instead of opening public permissions, you can create a read-only token under **Settings → API Tokens → Create new** and set `STRAPI_API_TOKEN=...` in `frontend/.env.local`.
 
-## Hazirlanmis content type'lar
+## Content types
 
-| Tip | Kind | Aciklama |
+| Type | Kind | Description |
 |---|---|---|
-| `Project` | collection | Portfoliodaki projeler — title, slug, summary, description, cover, gallery, technologies (JSON), liveUrl, repoUrl, featured, order |
-| `Skill` | collection | Yetkinlikler — name, category (Frontend/Backend/Database/DevOps/Tooling/Other), level (0-100), icon, order |
-| `About` | single type | Kisisel bilgi — fullName, headline, bio, email, location, avatar, resume, github/linkedin/twitter/website url |
+| `Project` | collection | Portfolio projects — title, slug, summary, description, cover, gallery, technologies (JSON), liveUrl, repoUrl, featured, order |
+| `Skill` | collection | Skills — name, category (Frontend/Backend/Database/DevOps/Tooling/Other), level (0-100), icon, order |
+| `About` | single type | Profile — fullName, headline, bio, email, location, avatar, resume, GitHub/LinkedIn/Twitter/website URLs |
 
-Schema dosyalari `backend/src/api/<name>/content-types/<name>/schema.json` altinda. Strapi acilinca otomatik tanir; admin UI'dan da duzenleyebilirsin.
+Schemas live under `backend/src/api/<name>/content-types/<name>/schema.json`. Strapi picks them up on boot; you can also edit fields in the admin UI.
 
-## Frontend yapisi
+## Ledgeria issue ingestion (optional)
 
-- `src/lib/strapi.ts` — Strapi REST API helper. `fetchStrapi<T>()` ve `strapiMedia()` fonksiyonlari.
-- `src/types/strapi.ts` — Project / Skill / About / StrapiResponse tipleri.
-- `src/app/page.tsx` — anasayfa, About + Projects + Skills cekiyor. Strapi kapaliysa friendly bir uyari gosterir.
-- `next.config.ts` — Strapi `localhost:1337/uploads/**` icin `next/image` izinleri tanimli.
+The backend exposes **`POST /ledgeria/v1/issues`** at the **root** URL (not under `/api`), for the Ledgeria desktop client contract. Issues are stored in the **Ledgeria Issue** collection type.
 
-## Production icin notlar
+- Optional auth: set **`LEDGERIA_ISSUES_API_KEY`** in `backend/.env` and send `Authorization: Bearer <key>` or `X-API-Key: <key>`.
+- In production (`api.mustidev.com`), route this path to the same Strapi process (or proxy) as in the client.
 
-- Strapi'de SQLite yerine PostgreSQL kullan (`backend/config/database.ts` ve `.env`).
-- Frontend'i Vercel'e, Strapi'yi bir VPS / Strapi Cloud / Render / Railway gibi bir yere koy.
-- `frontend/.env.local` icindeki `NEXT_PUBLIC_STRAPI_URL` production URL'iyle guncellenmeli.
-- `next.config.ts` icindeki image remotePatterns production hostname'ini de kapsayacak sekilde guncellenmeli.
+## Frontend layout
 
-## Neden bu yapı?
+- `frontend/src/lib/strapi.ts` — Strapi REST helpers: `fetchStrapi<T>()`, `strapiMedia()`.
+- `frontend/src/types/strapi.ts` — Types for Project / Skill / About / `StrapiResponse`.
+- `frontend/src/app/page.tsx` — Home: loads About, Projects, Skills; shows a friendly message if Strapi is down.
+- `frontend/next.config.ts` — `next/image` allows Strapi `localhost:1337/uploads/**`.
 
-- Strapi 5: TypeScript-native, headless CMS, Admin UI built-in.
-- Next.js 16 App Router + Server Components: SEO ve performans icin server-side fetch.
-- Tailwind v4: zero-config styling.
-- Tek monorepo: kolay yedekleme + tek `npm run dev`.
+## Production notes
+
+- Prefer **PostgreSQL** over SQLite for Strapi (`backend/config/database.ts` and env).
+- Host the frontend on Vercel (or similar) and Strapi on a VPS, **Strapi Cloud**, Render, Railway, etc.
+- Set `NEXT_PUBLIC_STRAPI_URL` in `frontend/.env.local` to the production Strapi URL.
+- Update `next.config.ts` `image.remotePatterns` to include your production Strapi hostname.
+
+## Why this stack?
+
+- **Strapi 5**: TypeScript-first headless CMS with a built-in admin.
+- **Next.js 16** App Router + Server Components: server-side fetch for SEO and performance.
+- **Tailwind v4**: low-config styling.
+- **One monorepo**: simple backups and a single `npm run dev`.
