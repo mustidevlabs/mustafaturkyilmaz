@@ -93,6 +93,20 @@ More: **`ledgeria/README.md`**, **`backend/src/ledgeria/README.md`**.
 
 ---
 
+## Mobile app development (GitHub)
+
+This monorepo hosts **Strapi** (`backend/`) and **Next.js** apps (`apps/*`). **Native or hybrid mobile clients** are not under `apps/` here; GitHub’s repository profile still benefits from an explicit pointer so people know where mobile work lives.
+
+| Topic | Where it lives |
+|--------|----------------|
+| Shared API, CMS, Ledgeria ingestion | **`backend/`** (Strapi + `src/ledgeria/`) — same endpoints mobile clients would call. |
+| API / product contracts | **`ledgeria/README.md`**, **`backend/src/ledgeria/README.md`**, and repo `docs/` when present. |
+| Dedicated mobile source (Expo, RN, Flutter, etc.) | **Separate GitHub repo** (typical); add the canonical URL below when it exists. |
+
+**Mobile app repository:** _Not published in this monorepo — when you have a public app repo (e.g. under `https://github.com/mustidevlabs/...`), replace this line with a markdown link._
+
+---
+
 ## Strapi Cloud
 
 **Base directory:** **`backend`** (this folder in the Git repo; matches Strapi Cloud “root directory” for the backend app).

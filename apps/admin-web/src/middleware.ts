@@ -29,9 +29,6 @@ export async function middleware(request: NextRequest) {
   if (pathname.startsWith("/api/auth/login")) {
     return NextResponse.next();
   }
-  if (pathname.startsWith("/api/auth/register")) {
-    return NextResponse.next();
-  }
   if (pathname.startsWith("/api/auth/logout")) {
     return NextResponse.next();
   }
