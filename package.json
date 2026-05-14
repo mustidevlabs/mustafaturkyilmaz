@@ -21,6 +21,7 @@
     "check:strapi": "node scripts/check-strapi-cloud.mjs"
   },
   "dependencies": {
+    "@strapi/strapi": "5.44.0",
     "js-yaml": "^4.1.1"
   },
   "overrides": {
@@ -30,6 +31,7 @@
     "@strapi/database": "5.44.0",
     "@strapi/logger": "5.44.0",
     "@strapi/permissions": "5.44.0",
+    "@strapi/strapi": "5.44.0",
     "@strapi/types": "5.44.0",
     "@strapi/typescript-utils": "5.44.0",
     "@strapi/utils": "5.44.0"
