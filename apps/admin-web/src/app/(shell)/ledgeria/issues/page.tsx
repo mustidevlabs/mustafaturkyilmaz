@@ -91,14 +91,14 @@ async function fetchIssues(): Promise<
   return { ok: true, issues: pickIssues(json) };
 }
 
-export default async function AdminHomePage() {
+export default async function LedgeriaIssuesPage() {
   const result = await fetchIssues();
   const browserTls = getStrapiBrowserTlsToken();
 
   if (!result.ok) {
     if (result.reason === "no_token") {
       return (
-        <div className="mx-auto max-w-lg px-4 py-16">
+        <div className="max-w-lg py-8">
           <h1 className="text-xl font-semibold">Ledgeria issues</h1>
           <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-400">
             Set <code className="rounded bg-zinc-200 px-1 dark:bg-zinc-800">STRAPI_API_TOKEN</code>{" "}
@@ -126,7 +126,7 @@ export default async function AdminHomePage() {
     }
 
     return (
-      <div className="mx-auto max-w-lg px-4 py-16">
+      <div className="max-w-lg py-8">
         <h1 className="text-xl font-semibold text-red-700 dark:text-red-400">
           Could not load issues
         </h1>
@@ -160,7 +160,7 @@ export default async function AdminHomePage() {
   const { issues } = result;
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10">
+    <div className="py-4">
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-semibold tracking-tight">Ledgeria issues</h1>
         <p className="text-sm text-zinc-500 dark:text-zinc-400">

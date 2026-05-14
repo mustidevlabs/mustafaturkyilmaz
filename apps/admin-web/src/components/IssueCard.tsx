@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   deleteLedgeriaIssueFromForm,
   updateLedgeriaIssueFromForm,
-} from "@/app/ledgeria-issues-actions";
+} from "@/actions/ledgeria-issues";
 import { IssueLogsPanel } from "@/components/IssueLogsPanel";
 import { IssueScreenshotZoom } from "@/components/IssueScreenshotZoom";
 import {

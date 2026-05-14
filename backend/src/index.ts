@@ -1,5 +1,6 @@
 import type { Core } from '@strapi/strapi';
 
+import { registerAdminInviteRoute } from './admin-auth/invite-register-route';
 import { registerLedgeriaIssueIngestion } from './ledgeria/issue-ingestion';
 
 export default {
@@ -20,5 +21,6 @@ export default {
    */
   bootstrap({ strapi }: { strapi: Core.Strapi }) {
     registerLedgeriaIssueIngestion(strapi);
+    registerAdminInviteRoute(strapi);
   },
 };

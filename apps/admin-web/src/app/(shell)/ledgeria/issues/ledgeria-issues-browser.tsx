@@ -132,7 +132,7 @@ export function LedgeriaIssuesBrowserFallback({
   };
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10">
+    <div className="py-4">
       <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-100">
         <strong>Dev browser mode:</strong> Strapi is loaded from your browser (TLS
         stack), not Node.{" "}

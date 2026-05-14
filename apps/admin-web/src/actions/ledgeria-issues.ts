@@ -9,6 +9,8 @@ import {
   type LedgeriaIssueStatus,
 } from "@/lib/ledgeria-issues-shared";
 
+const ISSUES_PATH = "/ledgeria/issues";
+
 async function putLedgeriaIssueStatus(
   documentId: string,
   status: LedgeriaIssueStatus
@@ -45,7 +47,7 @@ export async function updateLedgeriaIssueStatusAction(
   const id = String(documentId ?? "").trim();
   if (!id || !isLedgeriaIssueStatus(status)) return { ok: false };
   const ok = await putLedgeriaIssueStatus(id, status);
-  if (ok) revalidatePath("/");
+  if (ok) revalidatePath(ISSUES_PATH);
   return { ok };
 }
 
@@ -56,7 +58,7 @@ export async function updateLedgeriaIssueFromForm(formData: FormData): Promise<v
   if (!documentId || !isLedgeriaIssueStatus(status)) return;
 
   const ok = await putLedgeriaIssueStatus(documentId, status);
-  if (ok) revalidatePath("/");
+  if (ok) revalidatePath(ISSUES_PATH);
 }
 
 export async function deleteLedgeriaIssueFromForm(formData: FormData): Promise<void> {
@@ -80,5 +82,5 @@ export async function deleteLedgeriaIssueFromForm(formData: FormData): Promise<v
 
   if (res.statusCode < 200 || res.statusCode >= 300) return;
 
-  revalidatePath("/");
+  revalidatePath(ISSUES_PATH);
 }

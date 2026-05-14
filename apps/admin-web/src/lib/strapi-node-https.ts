@@ -53,7 +53,7 @@ const tlsRange = {
  */
 export function strapiHttpsRequest(options: {
   url: string;
-  method: "GET" | "PUT" | "DELETE";
+  method: "GET" | "PUT" | "DELETE" | "POST";
   headers: Record<string, string>;
   body?: string;
 }): Promise<StrapiHttpsResult> {

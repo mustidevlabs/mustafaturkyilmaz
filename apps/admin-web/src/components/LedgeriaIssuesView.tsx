@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { updateLedgeriaIssueStatusAction } from "@/app/ledgeria-issues-actions";
+import { updateLedgeriaIssueStatusAction } from "@/actions/ledgeria-issues";
 import { IssueList } from "@/components/IssueList";
 import { IssuesBoard } from "@/components/IssuesBoard";
 import type {
