@@ -2,16 +2,10 @@ import type { Metadata } from "next";
 import { getStrapiPublicUrl } from "@/lib/strapi-public-url";
 import { strapiAuthHeaders } from "@/lib/strapi-admin-headers";
 import { strapiHttpsRequest } from "@/lib/strapi-node-https";
-import {
-  pickIssues,
-  screenshotSrc,
-  STATUS_OPTIONS,
-} from "@/lib/ledgeria-issues-shared";
-import { updateLedgeriaIssueFromForm } from "./ledgeria-issues-actions";
-import { IssueLogsPanel } from "@/components/issue-logs-panel";
-import { IssueScreenshotZoom } from "@/components/issue-screenshot-zoom";
+import { pickIssues } from "@/lib/ledgeria-issues-shared";
 import { LedgeriaIssuesBrowserFallback } from "./ledgeria-issues-browser";
 import { getStrapiBrowserTlsToken } from "@/lib/strapi-dev-browser-token";
+import { LedgeriaIssuesView } from "@/components/LedgeriaIssuesView";
 
 export const metadata: Metadata = {
   title: "Ledgeria issues — Admin",
@@ -109,7 +103,8 @@ export default async function AdminHomePage() {
           <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-400">
             Set <code className="rounded bg-zinc-200 px-1 dark:bg-zinc-800">STRAPI_API_TOKEN</code>{" "}
             in <code className="rounded bg-zinc-200 px-1 dark:bg-zinc-800">apps/admin-web/.env.local</code>
-            . Token needs <strong>find</strong> and <strong>update</strong> on <em>Ledgeria Issue</em> (full
+            . Token needs <strong>find</strong>, <strong>update</strong>, and <strong>delete</strong> on{" "}
+            <em>Ledgeria Issue</em> (full
             access is simplest).
           </p>
         </div>
@@ -177,107 +172,7 @@ export default async function AdminHomePage() {
       {issues.length === 0 ? (
         <p className="mt-12 text-center text-sm text-zinc-500">No issues yet.</p>
       ) : (
-        <div className="mt-10 space-y-6">
-          {issues.map((issue) => {
-            const id =
-              issue.documentId ?? (issue.id != null ? String(issue.id) : "");
-            if (!id) return null;
-            const img = screenshotSrc(issue.screenshotPngBase64);
-            const status = issue.status ?? "open";
-
-            return (
-              <article
-                key={id}
-                className="overflow-visible rounded-xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-950"
-              >
-                <div className="flex flex-col gap-4 p-4 sm:flex-row sm:gap-6">
-                  <div className="shrink-0 sm:w-40">
-                    {img ? (
-                      <IssueScreenshotZoom
-                        src={img}
-                        alt="Issue screenshot"
-                        pins={issue.screenshotPins}
-                      />
-                    ) : (
-                      <div className="flex h-32 items-center justify-center rounded-lg border border-dashed border-zinc-300 bg-zinc-50 text-xs text-zinc-400 dark:border-zinc-700 dark:bg-zinc-900">
-                        No screenshot
-                      </div>
-                    )}
-                  </div>
-                  <div className="min-w-0 flex-1 space-y-2">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h2 className="text-lg font-medium">
-                        {issue.title ?? "(no title)"}
-                      </h2>
-                      {issue.category ? (
-                        <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-900 dark:bg-amber-950 dark:text-amber-200">
-                          {issue.category}
-                        </span>
-                      ) : null}
-                      {issue.priority ? (
-                        <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
-                          {issue.priority}
-                        </span>
-                      ) : null}
-                    </div>
-                    <p className="font-mono text-xs text-zinc-500">
-                      id {issue.clientId ? String(issue.clientId) : "—"} · doc {id.slice(0, 8)}…
-                    </p>
-                    <p className="text-xs text-zinc-500">
-                      App {issue.appVersion ?? "—"} · reported{" "}
-                      {issue.clientCreatedAt ?? issue.createdAt ?? "—"}
-                      {issue.lastScreen ? (
-                        <>
-                          {" "}
-                          · screen <span className="font-mono">{issue.lastScreen}</span>
-                        </>
-                      ) : null}
-                    </p>
-
-                    <form
-                      action={updateLedgeriaIssueFromForm}
-                      className="flex flex-wrap items-center gap-2 pt-2"
-                    >
-                      <input type="hidden" name="documentId" value={id} />
-                      <label className="text-xs font-medium text-zinc-600 dark:text-zinc-400">
-                        Status
-                      </label>
-                      <select
-                        name="status"
-                        defaultValue={status}
-                        className="rounded-lg border border-zinc-300 bg-white px-2 py-1.5 text-sm dark:border-zinc-600 dark:bg-zinc-900"
-                      >
-                        {STATUS_OPTIONS.map((o) => (
-                          <option key={o.value} value={o.value}>
-                            {o.label}
-                          </option>
-                        ))}
-                      </select>
-                      <button
-                        type="submit"
-                        className="rounded-lg bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
-                      >
-                        Save
-                      </button>
-                    </form>
-
-                    <details className="pt-2 text-sm">
-                      <summary className="cursor-pointer font-medium text-zinc-700 dark:text-zinc-300">
-                        Description & logs
-                      </summary>
-                      <div className="mt-2 space-y-3 rounded-lg bg-zinc-50 p-3 text-zinc-800 dark:bg-zinc-900 dark:text-zinc-200">
-                        <p className="whitespace-pre-wrap text-sm">
-                          {issue.description ?? "—"}
-                        </p>
-                        {issue.logs ? <IssueLogsPanel logs={issue.logs} /> : null}
-                      </div>
-                    </details>
-                  </div>
-                </div>
-              </article>
-            );
-          })}
-        </div>
+        <LedgeriaIssuesView issues={issues} submitMode="server" />
       )}
     </div>
   );

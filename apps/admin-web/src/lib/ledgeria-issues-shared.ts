@@ -32,8 +32,26 @@ export const STATUS_OPTIONS = [
 
 export type LedgeriaIssueStatus = (typeof STATUS_OPTIONS)[number]["value"];
 
+/** Status PUT from client UI (forms, board drag). `false` means rollback for optimistic board moves. */
+export type LedgeriaIssueStatusSaveHandler = (
+  documentId: string,
+  status: string
+) => void | boolean | Promise<void | boolean>;
+
 export function isLedgeriaIssueStatus(v: string): v is LedgeriaIssueStatus {
   return STATUS_OPTIONS.some((o) => o.value === v);
+}
+
+/** Strapi document id for REST / forms (required for updates). */
+export function issueDocumentId(issue: StrapiIssue): string | null {
+  const id = issue.documentId ?? (issue.id != null ? String(issue.id) : "");
+  return id.trim() !== "" ? id : null;
+}
+
+/** Normalized status for grouping (unknown → open). */
+export function issueEffectiveStatus(issue: StrapiIssue): LedgeriaIssueStatus {
+  const s = issue.status ?? "open";
+  return isLedgeriaIssueStatus(s) ? s : "open";
 }
 
 export function pickIssues(payload: unknown): StrapiIssue[] {
