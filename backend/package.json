@@ -1,5 +1,5 @@
 {
-  "name": "ledgeria-api",
+  "name": "backend-strapi",
   "version": "0.1.0",
   "private": true,
   "description": "Strapi 5 — shared backend: portfolio CMS + Ledgeria issues + custom HTTP routes",

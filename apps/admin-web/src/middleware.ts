@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { STRAPI_USER_JWT_COOKIE } from "@/lib/admin-auth-constants";
+import { redirectGet } from "@/lib/redirect-get";
 import { isAuthSkipped } from "@/lib/admin-env";
 import { verifyStrapiUserJwt } from "@/lib/strapi-user-auth";
 
@@ -21,7 +22,7 @@ export async function middleware(request: NextRequest) {
     if (!isAuthSkipped()) {
       const jwt = request.cookies.get(STRAPI_USER_JWT_COOKIE)?.value;
       if (jwt && (await verifyStrapiUserJwt(jwt))) {
-        return NextResponse.redirect(new URL("/", request.url));
+        return redirectGet(new URL("/", request.url));
       }
     }
     return NextResponse.next();
@@ -43,12 +44,12 @@ export async function middleware(request: NextRequest) {
     const dest = `${pathname}${request.nextUrl.search}`;
     const u = loginUrl(request);
     if (dest !== "/") u.searchParams.set("from", dest);
-    return NextResponse.redirect(u);
+    return redirectGet(u);
   }
 
   const ok = await verifyStrapiUserJwt(jwt);
   if (!ok) {
-    const res = NextResponse.redirect(loginUrl(request, { e: "session" }));
+    const res = redirectGet(loginUrl(request, { e: "session" }));
     res.cookies.set(STRAPI_USER_JWT_COOKIE, "", { maxAge: 0, path: "/" });
     return res;
   }

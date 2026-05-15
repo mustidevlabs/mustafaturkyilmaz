@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
 import { STRAPI_USER_JWT_COOKIE } from "@/lib/admin-auth-constants";
+import { redirectGet } from "@/lib/redirect-get";
 import { strapiHttpsPostJson } from "@/lib/strapi-https-json";
 import { getStrapiPublicUrl } from "@/lib/strapi-public-url";
 import { safeRedirectPath } from "@/lib/safe-redirect-path";
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
   }
 
   if (!identifier || !password) {
-    return NextResponse.redirect(new URL("/login?e=credentials", request.url));
+    return redirectGet(new URL("/login?e=credentials", request.url));
   }
 
   const base = getStrapiPublicUrl().replace(/\/$/, "");
@@ -40,7 +40,7 @@ export async function POST(request: Request) {
       password,
     });
   } catch {
-    return NextResponse.redirect(new URL("/login?e=strapi", request.url));
+    return redirectGet(new URL("/login?e=strapi", request.url));
   }
 
   const data: unknown = (() => {
@@ -60,11 +60,11 @@ export async function POST(request: Request) {
       : null;
 
   if (res.statusCode < 200 || res.statusCode >= 300 || !jwt) {
-    return NextResponse.redirect(new URL("/login?e=credentials", request.url));
+    return redirectGet(new URL("/login?e=credentials", request.url));
   }
 
   const nextPath = safeRedirectPath(redirectTo);
-  const out = NextResponse.redirect(new URL(nextPath, request.url));
+  const out = redirectGet(new URL(nextPath, request.url));
   out.cookies.set(STRAPI_USER_JWT_COOKIE, jwt, {
     httpOnly: true,
     sameSite: "lax",
