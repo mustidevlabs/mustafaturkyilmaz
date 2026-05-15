@@ -18,23 +18,25 @@
     "start:ledgeria-api": "npm run start -w ledgeria-api",
     "start:portfolio": "npm run start -w portfolio-web",
     "start:admin": "npm run start -w admin-web",
-    "check:strapi": "node scripts/check-strapi-cloud.mjs"
+    "check:strapi": "node scripts/check-strapi-cloud.mjs",
+    "backup:strapi-code": "bash scripts/backup-backend-for-strapi-reset.sh",
+    "backup:strapi-export": "bash scripts/strapi-export-to-backups.sh"
   },
   "dependencies": {
-    "@strapi/strapi": "5.44.0",
+    "@strapi/strapi": "5.46.0",
     "js-yaml": "^4.1.1"
   },
   "overrides": {
-    "@strapi/admin": "5.44.0",
-    "@strapi/core": "5.44.0",
-    "@strapi/data-transfer": "5.44.0",
-    "@strapi/database": "5.44.0",
-    "@strapi/logger": "5.44.0",
-    "@strapi/permissions": "5.44.0",
-    "@strapi/strapi": "5.44.0",
-    "@strapi/types": "5.44.0",
-    "@strapi/typescript-utils": "5.44.0",
-    "@strapi/utils": "5.44.0"
+    "@strapi/admin": "5.46.0",
+    "@strapi/core": "5.46.0",
+    "@strapi/data-transfer": "5.46.0",
+    "@strapi/database": "5.46.0",
+    "@strapi/logger": "5.46.0",
+    "@strapi/permissions": "5.46.0",
+    "@strapi/strapi": "5.46.0",
+    "@strapi/types": "5.46.0",
+    "@strapi/typescript-utils": "5.46.0",
+    "@strapi/utils": "5.46.0"
   },
   "devDependencies": {
     "concurrently": "^9.0.1"

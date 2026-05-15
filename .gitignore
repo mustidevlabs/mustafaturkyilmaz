@@ -1,3 +1,6 @@
+# Local disaster-recovery archives (do not commit)
+/backups/
+
 # Node
 node_modules/
 
