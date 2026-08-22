@@ -5,7 +5,13 @@ Product-specific code for the **Ledgeria** desktop app integration. The rest of 
 | Location | Role |
 |----------|------|
 | `src/ledgeria/` | Custom HTTP handlers and Ledgeria-only logic (this folder). |
-| `src/api/ledgeria-issue/` | Strapi **content type** required by the framework (`ledgeria-issues` REST). Ingestion writes here. |
+| `src/api/ledgeria-issue/` | Issue content type; ingestion writes here. |
+| `src/api/ledgeria-customer/` | Vendor customers (`customerKey`). |
+| `src/api/ledgeria-edition/` | Edition capability templates (seeded on bootstrap). |
+| `src/api/ledgeria-license/` | Issued `SignedLicense` history (signed in admin-web). |
+| `src/ledgeria/seed-editions.ts` | Seeds/migrates `ngo-full` / `municipality-lite` (nested capabilities). |
+
+Admin control plane: `apps/admin-web` — customers, editions, capability tree, key wizard (`/ledgeria/settings/license-keys`), sign + download.
 
 Public HTTP contract: `POST /ledgeria/v1/issues` (and optional `POST /api/ledgeria/v1/issues` alias).
 

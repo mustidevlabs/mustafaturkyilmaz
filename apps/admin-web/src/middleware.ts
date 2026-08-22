@@ -33,6 +33,9 @@ export async function middleware(request: NextRequest) {
   if (pathname.startsWith("/api/auth/logout")) {
     return NextResponse.next();
   }
+  if (pathname === "/api/ledgeria/license") {
+    return NextResponse.next();
+  }
 
   if (isAuthSkipped()) {
     return NextResponse.next();

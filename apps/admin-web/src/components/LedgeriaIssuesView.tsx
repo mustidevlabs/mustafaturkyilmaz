@@ -8,6 +8,7 @@ import type {
   LedgeriaIssueStatusSaveHandler,
   StrapiIssue,
 } from "@/lib/ledgeria-issues-shared";
+import { cn } from "@/lib/utils";
 
 export type LedgeriaIssuesViewProps = {
   issues: StrapiIssue[];
@@ -41,31 +42,33 @@ export function LedgeriaIssuesView({
   return (
     <div>
       <div className="mt-6 flex flex-wrap items-center gap-2">
-        <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-          View
+        <span className="text-xs font-medium text-muted-foreground">
+          Görünüm
         </span>
-        <div className="inline-flex rounded-lg border border-zinc-200 bg-zinc-100 p-0.5 dark:border-zinc-700 dark:bg-zinc-800">
+        <div className="inline-flex rounded-lg border border-border bg-muted p-0.5">
           <button
             type="button"
             onClick={() => setMode("list")}
-            className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+            className={cn(
+              "rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
               mode === "list"
-                ? "bg-white text-zinc-900 shadow-sm dark:bg-zinc-950 dark:text-zinc-100"
-                : "text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200"
-            }`}
+                ? "bg-card text-foreground"
+                : "text-muted-foreground hover:text-foreground"
+            )}
           >
-            List
+            Liste
           </button>
           <button
             type="button"
             onClick={() => setMode("board")}
-            className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+            className={cn(
+              "rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
               mode === "board"
-                ? "bg-white text-zinc-900 shadow-sm dark:bg-zinc-950 dark:text-zinc-100"
-                : "text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200"
-            }`}
+                ? "bg-card text-foreground"
+                : "text-muted-foreground hover:text-foreground"
+            )}
           >
-            Board
+            Pano
           </button>
         </div>
       </div>

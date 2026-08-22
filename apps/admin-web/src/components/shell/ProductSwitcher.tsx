@@ -100,19 +100,19 @@ type AppTile = {
 const APPS: AppTile[] = [
   {
     href: "/",
-    label: "Home",
+    label: "Ana sayfa",
     Icon: IconHome,
     match: (p) => p === "/",
   },
   {
-    href: "/ledgeria/issues",
+    href: "/ledgeria",
     label: "Ledgeria",
     Icon: IconLedgeria,
     match: (p) => p.startsWith("/ledgeria"),
   },
   {
     href: "/portfolio",
-    label: "Portfolio",
+    label: "Portföy",
     Icon: IconPortfolio,
     match: (p) => p.startsWith("/portfolio"),
   },
@@ -157,14 +157,14 @@ export function ProductSwitcher() {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-2 py-1.5 text-sm font-medium text-zinc-800 shadow-sm hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"
+        className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-2 py-1.5 text-sm font-medium shadow-sm hover:bg-muted"
         aria-expanded={open}
         aria-haspopup="dialog"
-        aria-label={`Products — active: ${activeApp.label}. Open menu.`}
+        aria-label={`Ürünler — etkin: ${activeApp.label}. Menüyü aç.`}
       >
         <GridIcon />
         <span
-          className="flex size-8 items-center justify-center rounded-md bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-200"
+          className="flex size-8 items-center justify-center rounded-md bg-muted text-foreground"
           title={activeApp.label}
         >
           <ActiveIcon className="size-[18px]" />
@@ -172,9 +172,9 @@ export function ProductSwitcher() {
       </button>
       {open ? (
         <div
-          className="absolute right-0 z-50 mt-2 w-[min(100vw-2rem,17rem)] rounded-xl border border-zinc-200 bg-white p-3 shadow-lg dark:border-zinc-700 dark:bg-zinc-900"
+          className="absolute right-0 z-50 mt-2 w-[min(100vw-2rem,17rem)] rounded-xl border border-border bg-card p-3 shadow-lg"
           role="dialog"
-          aria-label="Products"
+          aria-label="Ürünler"
         >
           <ul className="grid grid-cols-3 gap-2">
             {APPS.map((app) => {
@@ -188,15 +188,15 @@ export function ProductSwitcher() {
                     aria-label={app.label}
                     className={
                       active
-                        ? "flex h-full min-h-[4.5rem] flex-col items-center justify-center gap-1 rounded-xl border border-emerald-200 bg-emerald-50 p-2 text-emerald-900 dark:border-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-100"
-                        : "flex h-full min-h-[4.5rem] flex-col items-center justify-center gap-1 rounded-xl border border-transparent p-2 text-zinc-600 hover:border-zinc-200 hover:bg-zinc-50 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:bg-zinc-800"
+                        ? "flex h-full min-h-[4.5rem] flex-col items-center justify-center gap-1 rounded-xl border border-primary/30 bg-primary/10 p-2 text-primary"
+                        : "flex h-full min-h-[4.5rem] flex-col items-center justify-center gap-1 rounded-xl border border-transparent p-2 text-foreground hover:border-border hover:bg-muted"
                     }
                     onClick={() => setOpen(false)}
                   >
-                    <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-white shadow-sm ring-1 ring-zinc-200/80 dark:bg-zinc-900 dark:ring-zinc-600">
+                    <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-background text-foreground shadow-sm ring-1 ring-border">
                       <Icon className="size-5" />
                     </span>
-                    <span className="w-full truncate text-center text-[10px] font-medium leading-tight text-zinc-700 dark:text-zinc-300">
+                    <span className="w-full truncate text-center text-[10px] font-medium leading-tight">
                       {app.label}
                     </span>
                   </Link>

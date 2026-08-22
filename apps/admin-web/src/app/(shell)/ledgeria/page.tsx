@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
 export default function LedgeriaIndexPage() {
-  redirect("/ledgeria/issues");
+  redirect("/ledgeria/settings/license-keys");
 }

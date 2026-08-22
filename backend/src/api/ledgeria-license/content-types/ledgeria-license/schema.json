@@ -1,0 +1,83 @@
+{
+  "kind": "collectionType",
+  "collectionName": "ledgeria_licenses",
+  "info": {
+    "singularName": "ledgeria-license",
+    "pluralName": "ledgeria-licenses",
+    "displayName": "Ledgeria License",
+    "description": "Issued SignedLicense documents (history + download). Signed in admin-web; stored here."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "licenseId": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "maxLength": 64
+    },
+    "customer": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::ledgeria-customer.ledgeria-customer",
+      "inversedBy": "licenses"
+    },
+    "customerKey": {
+      "type": "string",
+      "required": true,
+      "maxLength": 120
+    },
+    "edition": {
+      "type": "string",
+      "required": true,
+      "maxLength": 120
+    },
+    "capabilities": {
+      "type": "json",
+      "required": true
+    },
+    "clientId": {
+      "type": "string",
+      "maxLength": 120
+    },
+    "updateChannel": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "issuedAt": {
+      "type": "string",
+      "required": true,
+      "maxLength": 64
+    },
+    "expiresAt": {
+      "type": "string",
+      "maxLength": 64
+    },
+    "maxDevices": {
+      "type": "integer",
+      "min": 1
+    },
+    "revoked": {
+      "type": "boolean",
+      "default": false,
+      "required": true
+    },
+    "notes": {
+      "type": "text"
+    },
+    "keyId": {
+      "type": "string",
+      "required": true,
+      "maxLength": 64
+    },
+    "signedLicenseJson": {
+      "type": "text",
+      "required": true
+    },
+    "branding": {
+      "type": "json"
+    }
+  }
+}

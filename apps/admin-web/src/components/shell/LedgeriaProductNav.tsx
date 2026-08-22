@@ -2,37 +2,89 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { LicenseHandbook } from "@/components/licensing/LicenseHandbook";
+import { cn } from "@/lib/utils";
 
-const items = [{ href: "/ledgeria/issues", label: "Issues" }] as const;
+const licenseFlow = [
+  {
+    href: "/ledgeria/settings/license-keys",
+    label: "Lisans anahtarları",
+    step: 1,
+  },
+  { href: "/ledgeria/customers", label: "Müşteriler", step: 2 },
+  { href: "/ledgeria/licenses", label: "Lisanslar", step: 3 },
+  { href: "/ledgeria/editions", label: "Yetki paketleri" },
+] as const;
+
+function NavLink({
+  href,
+  label,
+  pathname,
+  step,
+}: {
+  href: string;
+  label: string;
+  pathname: string;
+  step?: number;
+}) {
+  const active = pathname === href || pathname.startsWith(`${href}/`);
+  return (
+    <Link
+      href={href}
+      className={cn(
+        "flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors",
+        active
+          ? "bg-primary/15 text-primary"
+          : "text-foreground/80 hover:bg-muted hover:text-foreground"
+      )}
+    >
+      {step != null ? (
+        <span
+          className={cn(
+            "flex size-5 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold",
+            active
+              ? "bg-primary text-primary-foreground"
+              : "bg-muted text-muted-foreground"
+          )}
+          aria-hidden
+        >
+          {step}
+        </span>
+      ) : null}
+      <span>{label}</span>
+    </Link>
+  );
+}
 
 export function LedgeriaProductNav() {
   const pathname = usePathname() ?? "";
 
   return (
     <nav
-      className="flex flex-row gap-1 border-b border-zinc-200 pb-3 dark:border-zinc-800 lg:flex-col lg:border-b-0 lg:border-r lg:pb-0 lg:pr-4"
+      className="flex gap-1 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible lg:pb-0"
       aria-label="Ledgeria"
     >
-      <p className="hidden text-xs font-semibold uppercase tracking-wide text-zinc-500 lg:mb-2 lg:block dark:text-zinc-400">
-        Ledgeria
+      <div className="lg:mb-3">
+        <LicenseHandbook />
+      </div>
+      <p className="hidden px-3 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground lg:mb-1 lg:block">
+        Sıra
       </p>
-      {items.map((item) => {
-        const active =
-          pathname === item.href || pathname.startsWith(`${item.href}/`);
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={
-              active
-                ? "rounded-lg bg-emerald-100 px-3 py-2 text-sm font-medium text-emerald-950 dark:bg-emerald-950 dark:text-emerald-100"
-                : "rounded-lg px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
-            }
-          >
-            {item.label}
-          </Link>
-        );
-      })}
+      {licenseFlow.map((item) => (
+        <NavLink
+          key={item.href}
+          href={item.href}
+          label={item.label}
+          pathname={pathname}
+          step={"step" in item ? item.step : undefined}
+        />
+      ))}
+      <div className="hidden lg:my-3 lg:block lg:h-px lg:bg-border" aria-hidden />
+      <NavLink
+        href="/ledgeria/issues"
+        label="Geri bildirim"
+        pathname={pathname}
+      />
     </nav>
   );
 }

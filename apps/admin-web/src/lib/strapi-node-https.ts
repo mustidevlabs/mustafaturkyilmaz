@@ -1,4 +1,5 @@
 import dns from "node:dns";
+import http from "node:http";
 import https, { type Agent, type RequestOptions } from "node:https";
 import { URL } from "node:url";
 import { getProxyForUrl } from "proxy-from-env";
@@ -16,11 +17,12 @@ function httpsAgentForStrapiUrl(urlString: string): Agent | undefined {
 }
 
 function sendRequest(
+  transport: typeof http | typeof https,
   requestOptions: RequestOptions,
   body?: string
 ): Promise<StrapiHttpsResult> {
   return new Promise((resolve, reject) => {
-    const req = https.request(requestOptions, (res) => {
+    const req = transport.request(requestOptions, (res) => {
       const chunks: Buffer[] = [];
       res.on("data", (chunk: Buffer) => {
         chunks.push(chunk);
@@ -45,11 +47,11 @@ const tlsRange = {
 };
 
 /**
- * HTTPS to Strapi using node:https (not global fetch).
+ * HTTP(S) to Strapi using node:http / node:https (not global fetch).
  *
- * - No proxy: resolve IPv4, connect to IP with SNI + Host (stable on broken IPv6 paths).
- * - HTTPS_PROXY / ALL_PROXY (+ NO_PROXY): {@link HttpsProxyAgent} so outbound TLS
- *   matches environments where the browser uses a system proxy but Node would not.
+ * - `http://` (local Strapi): plain HTTP.
+ * - `https://` no proxy: resolve IPv4, connect to IP with SNI + Host.
+ * - HTTPS_PROXY / ALL_PROXY (+ NO_PROXY): {@link HttpsProxyAgent}.
  */
 export function strapiHttpsRequest(options: {
   url: string;
@@ -58,8 +60,30 @@ export function strapiHttpsRequest(options: {
   body?: string;
 }): Promise<StrapiHttpsResult> {
   const u = new URL(options.url);
-  const port = u.port ? Number(u.port) : 443;
+  const isHttp = u.protocol === "http:";
+  const port = u.port
+    ? Number(u.port)
+    : isHttp
+      ? 80
+      : 443;
   const path = `${u.pathname}${u.search}`;
+
+  if (isHttp) {
+    const hostHeader =
+      u.port && u.port !== "80" ? `${u.hostname}:${u.port}` : u.hostname;
+    const requestOptions: RequestOptions = {
+      hostname: u.hostname,
+      port,
+      path,
+      method: options.method,
+      headers: {
+        Host: hostHeader,
+        ...options.headers,
+      },
+    };
+    return sendRequest(http, requestOptions, options.body);
+  }
+
   const agent = httpsAgentForStrapiUrl(options.url);
 
   if (agent) {
@@ -73,7 +97,7 @@ export function strapiHttpsRequest(options: {
       servername: u.hostname,
       ...tlsRange,
     };
-    return sendRequest(requestOptions, options.body);
+    return sendRequest(https, requestOptions, options.body);
   }
 
   return (async () => {
@@ -95,6 +119,6 @@ export function strapiHttpsRequest(options: {
       ...tlsRange,
     };
 
-    return sendRequest(requestOptions, options.body);
+    return sendRequest(https, requestOptions, options.body);
   })();
 }

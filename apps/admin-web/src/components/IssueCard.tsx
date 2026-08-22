@@ -50,12 +50,12 @@ function StatusControl({
   }, [status]);
 
   const selectClass = compact
-    ? "w-full min-w-0 rounded-md border border-zinc-300 bg-white px-1.5 py-1 text-xs dark:border-zinc-600 dark:bg-zinc-900"
-    : "w-full min-w-0 rounded-lg border border-zinc-300 bg-white px-2 py-1.5 text-sm dark:border-zinc-600 dark:bg-zinc-900 sm:w-auto lg:w-full";
+    ? "w-full min-w-0 rounded-md border border-input bg-card px-1.5 py-1 text-xs"
+    : "w-full min-w-0 rounded-lg border border-input bg-card px-2 py-1.5 text-sm sm:w-auto lg:w-full";
 
   const btnClass = compact
-    ? "rounded-md bg-zinc-900 px-2 py-1 text-xs font-medium text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
-    : "rounded-lg bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200 lg:w-full";
+    ? "rounded-md bg-primary px-2 py-1 text-xs font-medium text-primary-foreground hover:bg-primary-hover"
+    : "rounded-lg bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary-hover lg:w-full";
 
   if (submitMode === "server") {
     return (
@@ -69,8 +69,8 @@ function StatusControl({
         }
       >
         <input type="hidden" name="documentId" value={documentId} />
-        <label className="text-[11px] font-medium text-zinc-600 dark:text-zinc-400">
-          Status
+        <label className="text-[11px] font-medium text-muted-foreground">
+          Durum
         </label>
         <select
           name="status"
@@ -85,7 +85,7 @@ function StatusControl({
           ))}
         </select>
         <button type="submit" className={btnClass}>
-          Save
+          Kaydet
         </button>
       </form>
     );
@@ -99,8 +99,8 @@ function StatusControl({
           : "flex w-full flex-wrap items-center gap-2 lg:flex-col lg:items-stretch"
       }
     >
-      <label className="text-[11px] font-medium text-zinc-600 dark:text-zinc-400">
-        Status
+      <label className="text-[11px] font-medium text-muted-foreground">
+        Durum
       </label>
       <select
         value={local}
@@ -120,14 +120,14 @@ function StatusControl({
         onClick={() => void onSave?.(documentId, local)}
         className={`${btnClass} disabled:opacity-50`}
       >
-        {busy ? "Saving…" : "Save"}
+        {busy ? "Kaydediliyor…" : "Kaydet"}
       </button>
     </div>
   );
 }
 
 const DELETE_CONFIRM_MSG =
-  "Permanently delete this issue from Strapi? This cannot be undone.";
+  "Bu kayıt Strapi’den kalıcı silinsin mi? Geri alınamaz.";
 
 /** Corner (board) or toolbar (list): overflow `···` menu; currently delete only. */
 function IssueOverflowMenu({
@@ -152,13 +152,13 @@ function IssueOverflowMenu({
   };
 
   const panelClass =
-    "absolute right-0 top-full z-30 mt-1 min-w-[9rem] rounded-lg border border-zinc-200 bg-white py-1 shadow-lg dark:border-zinc-800 dark:bg-zinc-950";
+    "absolute right-0 top-full z-30 mt-1 min-w-[9rem] rounded-lg border border-border bg-card py-1 shadow-lg";
 
   const summaryBtn =
-    "flex h-8 w-8 cursor-pointer list-none items-center justify-center rounded-md text-zinc-500 transition hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800 [&::-webkit-details-marker]:hidden";
+    "flex h-8 w-8 cursor-pointer list-none items-center justify-center rounded-md text-muted-foreground transition hover:bg-muted [&::-webkit-details-marker]:hidden";
 
   const deleteRowClass =
-    "block w-full px-3 py-2 text-left text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50 dark:text-red-400 dark:hover:bg-red-950/50";
+    "block w-full px-3 py-2 text-left text-sm font-medium text-destructive hover:bg-destructive/10 disabled:opacity-50";
 
   return (
     <details
@@ -169,11 +169,11 @@ function IssueOverflowMenu({
           : "relative shrink-0 justify-self-end"
       }
     >
-      <summary className={summaryBtn} title="Actions">
+      <summary className={summaryBtn} title="İşlemler">
         <span className="select-none text-lg font-bold leading-none tracking-[0.15em]" aria-hidden>
           ···
         </span>
-        <span className="sr-only">Actions menu</span>
+        <span className="sr-only">İşlemler</span>
       </summary>
       <div className={panelClass}>
         {submitMode === "server" ? (
@@ -186,7 +186,7 @@ function IssueOverflowMenu({
           >
             <input type="hidden" name="documentId" value={documentId} />
             <button type="submit" className={deleteRowClass}>
-              Delete permanently
+              Kalıcı sil
             </button>
           </form>
         ) : (
@@ -200,7 +200,7 @@ function IssueOverflowMenu({
               void onDelete?.(documentId);
             }}
           >
-            {busy ? "Deleting…" : "Delete permanently"}
+            {busy ? "Siliniyor…" : "Kalıcı sil"}
           </button>
         )}
       </div>
@@ -224,7 +224,7 @@ export function IssueCard({
 
   if (variant === "board") {
     return (
-      <article className="relative overflow-visible rounded-lg border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
+      <article className="relative overflow-visible rounded-lg border border-border bg-card shadow-sm">
         <IssueOverflowMenu
           documentId={id}
           submitMode={submitMode}
@@ -238,48 +238,48 @@ export function IssueCard({
               <IssueScreenshotZoom
                 src={img}
                 alt=""
-                className="max-h-16 w-full rounded-md border border-zinc-200 object-contain dark:border-zinc-700"
+                className="max-h-16 w-full rounded-md border border-border object-contain"
                 pins={issue.screenshotPins}
               />
             ) : (
-              <div className="flex h-16 items-center justify-center rounded-md border border-dashed border-zinc-300 bg-zinc-50 text-[10px] text-zinc-400 dark:border-zinc-700 dark:bg-zinc-900">
+              <div className="flex h-16 items-center justify-center rounded-md border border-dashed border-border bg-muted text-[10px] text-muted-foreground">
                 —
               </div>
             )}
           </div>
           <div className="min-w-0 space-y-1">
             <h2 className="line-clamp-2 text-sm font-medium leading-snug">
-              {issue.title ?? "(no title)"}
+              {issue.title ?? "(başlıksız)"}
             </h2>
             <div className="flex flex-wrap gap-1">
               {issue.category ? (
-                <span className="rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-medium text-amber-900 dark:bg-amber-950 dark:text-amber-200">
+                <span className="rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-medium text-amber-900">
                   {issue.category}
                 </span>
               ) : null}
               {issue.priority ? (
-                <span className="rounded-full bg-zinc-100 px-1.5 py-0.5 text-[10px] text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
+                <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">
                   {issue.priority}
                 </span>
               ) : null}
             </div>
-            <p className="truncate font-mono text-[10px] text-zinc-500">
+            <p className="truncate font-mono text-[10px] text-muted-foreground">
               {issue.clientId ? String(issue.clientId).slice(0, 12) + "…" : "—"}
             </p>
           </div>
-          <div className="col-span-2 flex min-w-0 items-center justify-between gap-2 border-t border-zinc-100 pt-1.5 dark:border-zinc-800">
-            <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wide text-zinc-400 dark:text-zinc-500">
-              Created
+          <div className="col-span-2 flex min-w-0 items-center justify-between gap-2 border-t border-border pt-1.5">
+            <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+              Oluşturma
             </span>
             {issue.createdAt ? (
               <time
                 dateTime={issue.createdAt}
-                className="truncate text-right font-mono text-[10px] tabular-nums text-zinc-600 dark:text-zinc-300"
+                className="truncate text-right font-mono text-[10px] tabular-nums text-muted-foreground"
               >
                 {formatIssueDateTime(issue.createdAt)}
               </time>
             ) : (
-              <span className="truncate text-right font-mono text-[10px] text-zinc-400 dark:text-zinc-500">
+              <span className="truncate text-right font-mono text-[10px] text-muted-foreground">
                 —
               </span>
             )}
@@ -295,10 +295,10 @@ export function IssueCard({
             />
           </div>
           <details className="col-span-2 text-[11px]">
-            <summary className="cursor-pointer font-medium text-zinc-600 dark:text-zinc-400">
-              Description & logs
+            <summary className="cursor-pointer font-medium text-muted-foreground">
+              Açıklama ve günlük
             </summary>
-            <div className="mt-1 max-h-32 overflow-y-auto rounded-md bg-zinc-50 p-2 text-zinc-800 dark:bg-zinc-900 dark:text-zinc-200">
+            <div className="mt-1 max-h-32 overflow-y-auto rounded-md bg-muted p-2 text-foreground">
               <p className="whitespace-pre-wrap">{issue.description ?? "—"}</p>
               {issue.logs ? <IssueLogsPanel logs={issue.logs} /> : null}
             </div>
@@ -309,7 +309,7 @@ export function IssueCard({
   }
 
   return (
-    <article className="overflow-visible rounded-xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
+    <article className="overflow-visible rounded-xl border border-border bg-card shadow-sm">
       <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-[minmax(0,11rem)_minmax(0,1fr)] sm:gap-6 lg:grid-cols-[minmax(0,12rem)_minmax(0,1fr)_auto] lg:items-start">
         <div className="min-w-0 max-w-full">
           {img ? (
@@ -319,8 +319,8 @@ export function IssueCard({
               pins={issue.screenshotPins}
             />
           ) : (
-            <div className="flex h-32 items-center justify-center rounded-lg border border-dashed border-zinc-300 bg-zinc-50 text-xs text-zinc-400 dark:border-zinc-700 dark:bg-zinc-900">
-              No screenshot
+            <div className="flex h-32 items-center justify-center rounded-lg border border-dashed border-border bg-muted text-xs text-muted-foreground">
+              Ekran görüntüsü yok
             </div>
           )}
         </div>
@@ -328,24 +328,24 @@ export function IssueCard({
           <div className="min-w-0 flex-1 space-y-2">
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-lg font-medium">
-                {issue.title ?? "(no title)"}
+                {issue.title ?? "(başlıksız)"}
               </h2>
               {issue.category ? (
-                <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-900 dark:bg-amber-950 dark:text-amber-200">
+                <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-900">
                   {issue.category}
                 </span>
               ) : null}
               {issue.priority ? (
-                <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
+                <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
                   {issue.priority}
                 </span>
               ) : null}
             </div>
-            <p className="break-all font-mono text-xs text-zinc-500">
+            <p className="break-all font-mono text-xs text-muted-foreground">
               id {issue.clientId ? String(issue.clientId) : "—"} · doc{" "}
               {id.slice(0, 8)}…
             </p>
-            <p className="text-xs text-zinc-500">
+            <p className="text-xs text-muted-foreground">
               App {issue.appVersion ?? "—"}
               {issue.lastScreen ? (
                 <>
@@ -355,30 +355,26 @@ export function IssueCard({
                 </>
               ) : null}
             </p>
-            <dl className="grid gap-1.5 text-xs text-zinc-600 dark:text-zinc-400 sm:grid-cols-2 sm:gap-x-4">
+            <dl className="grid gap-1.5 text-xs text-muted-foreground sm:grid-cols-2 sm:gap-x-4">
               <div className="min-w-0">
-                <dt className="font-medium text-zinc-500 dark:text-zinc-500">
-                  Client sent at
-                </dt>
-                <dd className="break-words font-mono text-[11px] text-zinc-700 dark:text-zinc-300">
+                <dt className="font-medium">İstemci zamanı</dt>
+                <dd className="break-words font-mono text-[11px] text-foreground">
                   {formatIssueDateTime(issue.clientCreatedAt ?? undefined)}
                 </dd>
               </div>
               <div className="min-w-0">
-                <dt className="font-medium text-zinc-500 dark:text-zinc-500">
-                  Recorded (Strapi)
-                </dt>
-                <dd className="break-words font-mono text-[11px] text-zinc-700 dark:text-zinc-300">
+                <dt className="font-medium">Kayıt (Strapi)</dt>
+                <dd className="break-words font-mono text-[11px] text-foreground">
                   {formatIssueDateTime(issue.createdAt ?? undefined)}
                 </dd>
               </div>
             </dl>
 
             <details className="pt-2 text-sm">
-              <summary className="cursor-pointer font-medium text-zinc-700 dark:text-zinc-300">
-                Description & logs
+              <summary className="cursor-pointer font-medium text-foreground">
+                Açıklama ve günlük
               </summary>
-              <div className="mt-2 space-y-3 rounded-lg bg-zinc-50 p-3 text-zinc-800 dark:bg-zinc-900 dark:text-zinc-200">
+              <div className="mt-2 space-y-3 rounded-lg bg-muted p-3 text-foreground">
                 <p className="whitespace-pre-wrap text-sm">
                   {issue.description ?? "—"}
                 </p>
@@ -387,7 +383,7 @@ export function IssueCard({
             </details>
           </div>
         </div>
-        <div className="flex min-w-0 flex-col gap-3 border-zinc-200 sm:col-span-2 sm:flex-row sm:flex-wrap sm:items-center sm:border-t sm:pt-3 lg:col-span-1 lg:row-span-1 lg:flex-col lg:items-stretch lg:border-l lg:border-t-0 lg:pt-0 lg:pl-6 dark:border-zinc-700">
+        <div className="flex min-w-0 flex-col gap-3 border-border sm:col-span-2 sm:flex-row sm:flex-wrap sm:items-center sm:border-t sm:pt-3 lg:col-span-1 lg:row-span-1 lg:flex-col lg:items-stretch lg:border-l lg:border-t-0 lg:pt-0 lg:pl-6">
           <div className="flex w-full justify-end lg:justify-end">
             <IssueOverflowMenu
               documentId={id}

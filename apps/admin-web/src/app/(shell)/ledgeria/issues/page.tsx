@@ -8,7 +8,7 @@ import { getStrapiBrowserTlsToken } from "@/lib/strapi-dev-browser-token";
 import { LedgeriaIssuesView } from "@/components/LedgeriaIssuesView";
 
 export const metadata: Metadata = {
-  title: "Ledgeria issues — Admin",
+  title: "Geri bildirim — Admin",
 };
 
 const STRAPI_URL = getStrapiPublicUrl();
@@ -99,13 +99,12 @@ export default async function LedgeriaIssuesPage() {
     if (result.reason === "no_token") {
       return (
         <div className="max-w-lg py-8">
-          <h1 className="text-xl font-semibold">Ledgeria issues</h1>
-          <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-400">
-            Set <code className="rounded bg-zinc-200 px-1 dark:bg-zinc-800">STRAPI_API_TOKEN</code>{" "}
-            in <code className="rounded bg-zinc-200 px-1 dark:bg-zinc-800">apps/admin-web/.env.local</code>
-            . Token needs <strong>find</strong>, <strong>update</strong>, and <strong>delete</strong> on{" "}
-            <em>Ledgeria Issue</em> (full
-            access is simplest).
+          <h1 className="text-xl font-semibold">Geri bildirim</h1>
+          <p className="mt-3 text-sm text-muted-foreground">
+            <code className="rounded bg-muted px-1">STRAPI_API_TOKEN</code>{" "}
+            <code className="rounded bg-muted px-1">apps/admin-web/.env.local</code>{" "}
+            içinde olmalı. Token’ın Ledgeria Issue için find, update ve delete
+            izni gerekir.
           </p>
         </div>
       );
@@ -127,30 +126,30 @@ export default async function LedgeriaIssuesPage() {
 
     return (
       <div className="max-w-lg py-8">
-        <h1 className="text-xl font-semibold text-red-700 dark:text-red-400">
-          Could not load issues
+        <h1 className="text-xl font-semibold text-destructive">
+          Geri bildirim yüklenemedi
         </h1>
-        <pre className="mt-4 max-h-64 overflow-auto rounded-lg bg-zinc-100 p-3 text-xs dark:bg-zinc-900">
-          {result.detail ?? "Unknown error"}
+        <pre className="mt-4 max-h-64 overflow-auto rounded-lg bg-muted p-3 text-xs">
+          {result.detail ?? "Bilinmeyen hata"}
         </pre>
         {isTlsHandshakeFailure(result.detail) && !browserTls ? (
-          <p className="mt-4 text-sm text-zinc-700 dark:text-zinc-300">
-            <strong>TLS from Node failed before HTTP.</strong> Your{" "}
-            <code className="rounded bg-zinc-200 px-1 dark:bg-zinc-800">STRAPI_API_TOKEN</code> is
-            not the problem. For local dev, add either{" "}
-            <code className="rounded bg-zinc-200 px-1 dark:bg-zinc-800">
+          <p className="mt-4 text-sm text-muted-foreground">
+            Node TLS el sıkışması HTTP’den önce düştü; token sorunu değil. Yerel
+            geliştirme için{" "}
+            <code className="rounded bg-muted px-1">
               STRAPI_DEV_MIRROR_API_TOKEN_TO_BROWSER=1
             </code>{" "}
-            (reuses your server token in the browser — development only) or{" "}
-            <code className="rounded bg-zinc-200 px-1 dark:bg-zinc-800">
+            veya{" "}
+            <code className="rounded bg-muted px-1">
               NEXT_PUBLIC_STRAPI_DEV_BROWSER_TOKEN
             </code>{" "}
-            with the same token value. Restart <code className="rounded bg-zinc-200 px-1 dark:bg-zinc-800">next dev</code>. See{" "}
-            <code className="rounded bg-zinc-200 px-1 dark:bg-zinc-800">.env.example</code>.
+            ekleyip admin’i yeniden başlatın. Ayrıntı:{" "}
+            <code className="rounded bg-muted px-1">.env.example</code>.
           </p>
         ) : null}
-        <p className="mt-4 text-sm text-zinc-600 dark:text-zinc-400">
-          Check <code className="rounded bg-zinc-200 px-1 dark:bg-zinc-800">NEXT_PUBLIC_STRAPI_URL</code>{" "}
+        <p className="mt-4 text-sm text-muted-foreground">
+          Strapi:{" "}
+          <code className="rounded bg-muted px-1">NEXT_PUBLIC_STRAPI_URL</code>{" "}
           ({STRAPI_URL}).
         </p>
       </div>
@@ -162,15 +161,17 @@ export default async function LedgeriaIssuesPage() {
   return (
     <div className="py-4">
       <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-semibold tracking-tight">Ledgeria issues</h1>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
-          {issues.length} issue{issues.length === 1 ? "" : "s"} · Strapi{" "}
+          <h1 className="text-2xl font-semibold tracking-tight">Geri bildirim</h1>
+          <p className="text-sm text-muted-foreground">
+            {issues.length} kayıt · Strapi{" "}
           <span className="font-mono text-xs">{STRAPI_URL}</span>
         </p>
       </div>
 
       {issues.length === 0 ? (
-        <p className="mt-12 text-center text-sm text-zinc-500">No issues yet.</p>
+        <p className="mt-12 text-center text-sm text-muted-foreground">
+          Henüz kayıt yok.
+        </p>
       ) : (
         <LedgeriaIssuesView issues={issues} submitMode="server" />
       )}

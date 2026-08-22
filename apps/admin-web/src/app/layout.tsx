@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
+import { ThemeProvider } from "@/components/shell/ThemeToggle";
+import { themeBootScript } from "@/components/shell/theme-boot";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -13,7 +17,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Admin",
-  description: "Internal operations: Ledgeria issues, portfolio CMS, and more.",
+  description: "İç operasyon: Ledgeria lisans, geri bildirim ve portföy.",
   robots: { index: false, follow: false },
 };
 
@@ -22,15 +26,20 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
-      lang="en"
+      lang="tr"
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body
-        className="min-h-full bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50"
+        className="min-h-full bg-background text-foreground"
         suppressHydrationWarning
       >
-        {children}
+        <Script id="theme-boot" strategy="beforeInteractive">
+          {themeBootScript}
+        </Script>
+        <ThemeProvider>
+          <TooltipProvider delayDuration={200}>{children}</TooltipProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

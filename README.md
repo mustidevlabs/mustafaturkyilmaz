@@ -83,13 +83,14 @@ Schemas: `backend/src/api/<name>/content-types/<name>/schema.json`.
 | Piece | Location |
 |-------|----------|
 | HTTP ingestion | `backend/src/ledgeria/issue-ingestion.ts` |
-| Strapi collection | `backend/src/api/ledgeria-issue/` |
-| Issues inbox (internal UI) | **http://localhost:3002** — `apps/admin-web` |
+| Strapi collections | `backend/src/api/ledgeria-issue/`, `ledgeria-customer/`, `ledgeria-edition/`, `ledgeria-license/` |
+| Edition seed | `backend/src/ledgeria/seed-editions.ts` |
+| Issues + license admin | **http://localhost:3002** — `apps/admin-web` |
 
-More: **`ledgeria/README.md`**, **`backend/src/ledgeria/README.md`**.
+More: **`ledgeria/README.md`**, **`ledgeria/CUSTOMER-LICENSING.md`**, **`backend/src/ledgeria/README.md`**, **`apps/admin-web/README.md`**.
 
 - Optional: **`LEDGERIA_ISSUES_API_KEY`** in `backend/.env`.
-- Admin issues UI: **`STRAPI_API_TOKEN`** + **`NEXT_PUBLIC_STRAPI_URL`** in `apps/admin-web/.env.local`.
+- Admin: **`STRAPI_API_TOKEN`** + **`NEXT_PUBLIC_STRAPI_URL`** in `apps/admin-web/.env.local`; license keys via **Lisans anahtarları** UI or `LEDGERIA_LICENSE_*` (see `apps/admin-web/.env.example`).
 
 ---
 

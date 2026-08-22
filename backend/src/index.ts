@@ -2,6 +2,7 @@ import type { Core } from '@strapi/strapi';
 
 import { registerAdminInviteRoute } from './admin-auth/invite-register-route';
 import { registerLedgeriaIssueIngestion } from './ledgeria/issue-ingestion';
+import { seedLedgeriaEditions } from './ledgeria/seed-editions';
 
 export default {
   /**
@@ -19,8 +20,15 @@ export default {
    * This gives you an opportunity to set up your data model,
    * run jobs, or perform some special logic.
    */
-  bootstrap({ strapi }: { strapi: Core.Strapi }) {
+  async bootstrap({ strapi }: { strapi: Core.Strapi }) {
     registerLedgeriaIssueIngestion(strapi);
     registerAdminInviteRoute(strapi);
+    try {
+      await seedLedgeriaEditions(strapi);
+    } catch (err) {
+      strapi.log.warn(
+        `[ledgeria] edition seed skipped: ${err instanceof Error ? err.message : String(err)}`
+      );
+    }
   },
 };

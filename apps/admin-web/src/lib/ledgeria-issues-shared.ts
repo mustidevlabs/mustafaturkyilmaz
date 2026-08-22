@@ -23,11 +23,11 @@ export type StrapiIssue = {
 };
 
 export const STATUS_OPTIONS = [
-  { value: "open", label: "Open" },
-  { value: "triaged", label: "Triaged" },
-  { value: "in_progress", label: "In progress" },
-  { value: "resolved", label: "Resolved" },
-  { value: "closed", label: "Closed" },
+  { value: "open", label: "Açık" },
+  { value: "triaged", label: "İncelendi" },
+  { value: "in_progress", label: "Devam ediyor" },
+  { value: "resolved", label: "Çözüldü" },
+  { value: "closed", label: "Kapalı" },
 ] as const;
 
 export type LedgeriaIssueStatus = (typeof STATUS_OPTIONS)[number]["value"];

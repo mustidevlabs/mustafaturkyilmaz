@@ -476,6 +476,111 @@ export interface ApiAboutAbout extends Struct.SingleTypeSchema {
   };
 }
 
+export interface ApiLedgeriaCustomerLedgeriaCustomer
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'ledgeria_customers';
+  info: {
+    description: 'Vendor customer records for Ledgeria commercial licensing (admin-web).';
+    displayName: 'Ledgeria Customer';
+    pluralName: 'ledgeria-customers';
+    singularName: 'ledgeria-customer';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    customerKey: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }>;
+    displayName: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    downloadPasswordHash: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    downloadPasswordLookup: Schema.Attribute.String &
+      Schema.Attribute.Unique &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 64;
+      }>;
+    downloadPasswordSetAt: Schema.Attribute.DateTime;
+    licenses: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::ledgeria-license.ledgeria-license'
+    >;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::ledgeria-customer.ledgeria-customer'
+    > &
+      Schema.Attribute.Private;
+    notes: Schema.Attribute.Text;
+    occupiedClientIds: Schema.Attribute.JSON;
+    publishedAt: Schema.Attribute.DateTime;
+    status: Schema.Attribute.Enumeration<['active', 'suspended']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'active'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiLedgeriaEditionLedgeriaEdition
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'ledgeria_editions';
+  info: {
+    description: 'Edition capability templates (ngo-full, municipality-lite, \u2026) for license issuing.';
+    displayName: 'Ledgeria Edition';
+    pluralName: 'ledgeria-editions';
+    singularName: 'ledgeria-edition';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    capabilities: Schema.Attribute.JSON & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    defaultUpdateChannel: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    description: Schema.Attribute.Text;
+    displayName: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    editionKey: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::ledgeria-edition.ledgeria-edition'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiLedgeriaIssueLedgeriaIssue
   extends Struct.CollectionTypeSchema {
   collectionName: 'ledgeria_issues';
@@ -544,6 +649,91 @@ export interface ApiLedgeriaIssueLedgeriaIssue
       Schema.Attribute.Required &
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 500;
+      }>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiLedgeriaLicenseLedgeriaLicense
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'ledgeria_licenses';
+  info: {
+    description: 'Issued SignedLicense documents (history + download). Signed in admin-web; stored here.';
+    displayName: 'Ledgeria License';
+    pluralName: 'ledgeria-licenses';
+    singularName: 'ledgeria-license';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    branding: Schema.Attribute.JSON;
+    capabilities: Schema.Attribute.JSON & Schema.Attribute.Required;
+    clientId: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    customer: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::ledgeria-customer.ledgeria-customer'
+    >;
+    customerKey: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }>;
+    edition: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }>;
+    expiresAt: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 64;
+      }>;
+    issuedAt: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 64;
+      }>;
+    keyId: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 64;
+      }>;
+    licenseId: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 64;
+      }>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::ledgeria-license.ledgeria-license'
+    > &
+      Schema.Attribute.Private;
+    maxDevices: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 1;
+        },
+        number
+      >;
+    notes: Schema.Attribute.Text;
+    publishedAt: Schema.Attribute.DateTime;
+    revoked: Schema.Attribute.Boolean &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<false>;
+    signedLicenseJson: Schema.Attribute.Text & Schema.Attribute.Required;
+    updateChannel: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
       }>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -1150,7 +1340,10 @@ declare module '@strapi/strapi' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::about.about': ApiAboutAbout;
+      'api::ledgeria-customer.ledgeria-customer': ApiLedgeriaCustomerLedgeriaCustomer;
+      'api::ledgeria-edition.ledgeria-edition': ApiLedgeriaEditionLedgeriaEdition;
       'api::ledgeria-issue.ledgeria-issue': ApiLedgeriaIssueLedgeriaIssue;
+      'api::ledgeria-license.ledgeria-license': ApiLedgeriaLicenseLedgeriaLicense;
       'api::project.project': ApiProjectProject;
       'api::skill.skill': ApiSkillSkill;
       'plugin::content-releases.release': PluginContentReleasesRelease;

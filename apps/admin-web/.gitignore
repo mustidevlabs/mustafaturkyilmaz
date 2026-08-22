@@ -3,6 +3,7 @@
 /out/
 .env*
 !.env.example
+/.data/
 *.tsbuildinfo
 next-env.d.ts
 .vercel

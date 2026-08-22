@@ -1,8 +1,14 @@
 import type { Metadata } from "next";
+import { ThemeToggle } from "@/components/shell/ThemeToggle";
 import { safeRedirectPath } from "@/lib/safe-redirect-path";
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export const metadata: Metadata = {
-  title: "Sign in — Admin",
+  title: "Giriş — Admin",
   robots: { index: false, follow: false },
 };
 
@@ -16,11 +22,11 @@ function first(v: string | string[] | undefined): string | undefined {
 }
 
 const ERR_COPY: Record<string, string> = {
-  credentials: "Email/username or password is incorrect.",
-  session: "Your session expired. Sign in again.",
-  strapi: "Could not reach Strapi. Check NEXT_PUBLIC_STRAPI_URL and network.",
+  credentials: "E-posta/kullanıcı adı veya şifre hatalı.",
+  session: "Oturumunuz doldu. Yeniden giriş yapın.",
+  strapi: "Strapi’ye ulaşılamadı. NEXT_PUBLIC_STRAPI_URL ve ağı kontrol edin.",
   signup_disabled:
-    "Self-service sign-up is disabled. Ask an administrator to create your application user in Strapi (Settings → Users).",
+    "Kendi kendine kayıt kapalı. Hesabı Strapi’de bir yönetici oluştursun (Ayarlar → Users).",
 };
 
 export default async function LoginPage({ searchParams }: Props) {
@@ -47,68 +53,58 @@ export default async function LoginPage({ searchParams }: Props) {
   const redirect = safeRedirectPath(first(sp.from));
 
   return (
-    <div className="flex min-h-full flex-col items-center justify-center px-4 py-16">
-      <div className="w-full max-w-sm rounded-xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-        <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-          Admin
-        </h1>
-        <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-          Sign in with your Strapi <strong>application user</strong> (Users &amp; Permissions).
-          New accounts are created in Strapi Admin, not here.
-        </p>
-
-        {errMsg ? (
-          <div className="mt-4 space-y-2">
-            <p className="rounded-lg bg-red-50 p-3 text-sm text-red-900 dark:bg-red-950/40 dark:text-red-100">
+    <div className="relative flex min-h-full flex-col items-center justify-center px-4 py-16">
+      <div className="absolute right-4 top-4">
+        <ThemeToggle />
+      </div>
+      <Card className="w-full max-w-sm">
+        <CardHeader>
+          <CardTitle>Admin</CardTitle>
+          <CardDescription>
+            Strapi uygulama kullanıcısı ile giriş yapın. Yeni hesaplar burada
+            değil, Strapi Admin’de açılır.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {errMsg ? (
+            <Alert tone="danger" className="mb-4">
               {errMsg}
-            </p>
-            {detail && resolvedKey !== "signup_disabled" ? (
-              <pre className="max-h-40 overflow-auto whitespace-pre-wrap break-words rounded-lg border border-red-200 bg-red-50/80 p-2 font-mono text-xs text-red-900 dark:border-red-900 dark:bg-red-950/30 dark:text-red-100">
-                {detail}
-              </pre>
-            ) : null}
-          </div>
-        ) : null}
-
-        <div className="mt-8">
-          <h2 className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">
-            Sign in
-          </h2>
-          <form
-            method="POST"
-            action="/api/auth/login"
-            className="mt-3 flex flex-col gap-3"
-          >
+              {detail && resolvedKey !== "signup_disabled" ? (
+                <pre className="mt-2 max-h-32 overflow-auto font-mono text-xs">
+                  {detail}
+                </pre>
+              ) : null}
+            </Alert>
+          ) : null}
+          <form method="POST" action="/api/auth/login" className="space-y-3">
             <input type="hidden" name="redirect" value={redirect} />
-            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              Email or username
-              <input
+            <div>
+              <Label htmlFor="identifier">E-posta veya kullanıcı adı</Label>
+              <Input
+                id="identifier"
                 name="identifier"
-                type="text"
                 required
                 autoComplete="username"
-                className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 shadow-sm outline-none ring-zinc-400 focus:ring-2 dark:border-zinc-600 dark:bg-zinc-950 dark:text-zinc-50"
+                className="mt-1"
               />
-            </label>
-            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              Password
-              <input
+            </div>
+            <div>
+              <Label htmlFor="password">Şifre</Label>
+              <Input
+                id="password"
                 name="password"
                 type="password"
                 required
                 autoComplete="current-password"
-                className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 shadow-sm outline-none ring-zinc-400 focus:ring-2 dark:border-zinc-600 dark:bg-zinc-950 dark:text-zinc-50"
+                className="mt-1"
               />
-            </label>
-            <button
-              type="submit"
-              className="rounded-lg bg-zinc-900 px-3 py-2 text-sm font-medium text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
-            >
-              Sign in
-            </button>
+            </div>
+            <Button type="submit" className="w-full">
+              Giriş yap
+            </Button>
           </form>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

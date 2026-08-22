@@ -21,13 +21,9 @@ import {
 
 const DRAG_MIME = "application/x-ledgeria-board-drag";
 
-const COLUMN_TITLE: Record<LedgeriaIssueStatus, string> = {
-  open: "Open",
-  triaged: "Triaged",
-  in_progress: "In progress",
-  resolved: "Resolved",
-  closed: "Closed",
-};
+const COLUMN_TITLE: Record<LedgeriaIssueStatus, string> = Object.fromEntries(
+  STATUS_OPTIONS.map((o) => [o.value, o.label])
+) as Record<LedgeriaIssueStatus, string>;
 
 function insertIndexFromPointer(columnEl: Element, clientY: number): number {
   const rows = columnEl.querySelectorAll("[data-board-issue-id]");
@@ -187,8 +183,8 @@ export function IssuesBoard({
   return (
     <div className="mt-10 flex gap-3 overflow-x-auto pb-2">
       <p className="sr-only">
-        Drag cards between columns to change status. Reordering within a column
-        updates this view only until reload; Strapi has no rank field yet.
+        Kartları sütunlar arasında sürükleyerek durumu değiştirin. Sütun içi
+        sıra yalnızca bu görünümde kalır; Strapi’de sıra alanı yok.
       </p>
       {STATUS_OPTIONS.map((col) => {
         const columnIssues = byStatus.get(col.value) ?? [];
@@ -196,15 +192,14 @@ export function IssuesBoard({
         return (
           <section
             key={col.value}
-            className="flex h-[min(70vh,52rem)] min-h-[18rem] w-[min(100%,20rem)] min-w-[17rem] shrink-0 flex-col overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50/80 dark:border-zinc-800 dark:bg-zinc-900/40"
+            className="flex h-[min(70vh,52rem)] min-h-[18rem] w-[min(100%,20rem)] min-w-[17rem] shrink-0 flex-col overflow-hidden rounded-xl border border-border bg-muted/60"
           >
-            <header className="sticky top-0 z-10 shrink-0 border-b border-zinc-200 bg-zinc-50/95 px-3 py-2 dark:border-zinc-800 dark:bg-zinc-900/95">
-              <h2 className="text-sm font-semibold text-zinc-800 dark:text-zinc-100">
+            <header className="sticky top-0 z-10 shrink-0 border-b border-border bg-muted/95 px-3 py-2">
+              <h2 className="text-sm font-semibold text-foreground">
                 {COLUMN_TITLE[col.value]}
               </h2>
-              <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
-                {columnIssues.length}{" "}
-                {columnIssues.length === 1 ? "issue" : "issues"}
+              <p className="text-[11px] text-muted-foreground">
+                {columnIssues.length} kayıt
               </p>
             </header>
             <div
@@ -221,10 +216,10 @@ export function IssuesBoard({
                   className={`flex min-h-[12rem] flex-1 flex-col items-center justify-center rounded-lg border-2 border-dashed px-2 text-center text-xs font-medium transition-colors ${
                     isGlow
                       ? "border-amber-500 bg-amber-50/70 text-amber-950 dark:border-amber-400 dark:bg-amber-950/50 dark:text-amber-100"
-                      : "border-zinc-300 text-zinc-500 dark:border-zinc-600 dark:text-zinc-400"
+                      : "border-border text-muted-foreground"
                   }`}
                 >
-                  Drag an issue here
+                  Buraya sürükleyin
                 </div>
               ) : null}
               {columnIssues.map((issue, idx) => {
@@ -265,7 +260,7 @@ export function IssuesBoard({
                       }}
                       className={`shrink-0 rounded-lg ${
                         draggingId === id
-                          ? "cursor-grabbing ring-2 ring-amber-500 ring-offset-2 ring-offset-white dark:ring-amber-400 dark:ring-offset-zinc-950"
+                          ? "cursor-grabbing ring-2 ring-amber-500 ring-offset-2 ring-offset-background"
                           : "cursor-grab"
                       }`}
                     >

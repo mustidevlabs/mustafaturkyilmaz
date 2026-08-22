@@ -1,0 +1,38 @@
+{
+  "kind": "collectionType",
+  "collectionName": "ledgeria_editions",
+  "info": {
+    "singularName": "ledgeria-edition",
+    "pluralName": "ledgeria-editions",
+    "displayName": "Ledgeria Edition",
+    "description": "Edition capability templates (ngo-full, municipality-lite, …) for license issuing."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "editionKey": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "maxLength": 120
+    },
+    "displayName": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "description": {
+      "type": "text"
+    },
+    "capabilities": {
+      "type": "json",
+      "required": true
+    },
+    "defaultUpdateChannel": {
+      "type": "string",
+      "maxLength": 200
+    }
+  }
+}

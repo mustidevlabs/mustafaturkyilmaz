@@ -6,7 +6,11 @@
 |------|------|
 | Strapi (shared backend + CMS) | `backend/` — workspace **`ledgeria-api`** |
 | Public portfolio | `apps/portfolio-web/` — workspace **`portfolio-web`** |
-| Internal issues UI | `apps/admin-web/` — workspace **`admin-web`** (e.g. **http://localhost:3002**) |
+| Internal admin (issues + licensing) | `apps/admin-web/` — workspace **`admin-web`** (e.g. **http://localhost:3002**) |
 | Cross-app notes | This folder (`ledgeria/README.md`) |
 
-See the root **README.md** for install and scripts.
+### Licensing (vendor control plane)
+
+Admin-web signs `SignedLicense` JSON (Ed25519) for the desktop app (`feat/customer-licensing`). Strapi stores customers, edition templates, and license history. Keys: UI at `/ledgeria/settings/license-keys` (encrypted `.data/`) or `LEDGERIA_LICENSE_PRIVATE_KEY_PKCS8_B64` in `apps/admin-web/.env.local` only.
+
+See root **README.md**, `apps/admin-web/README.md`, and [`CUSTOMER-LICENSING.md`](./CUSTOMER-LICENSING.md) (masaüstü sözleşme: sibling Ledgeria `docs/product/tr/CUSTOMER-LICENSING.md`).
