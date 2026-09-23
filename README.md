@@ -1,27 +1,27 @@
 # Mustafa Turkyilmaz — Monorepo
 
-**npm workspaces:** `apps/*` (Next frontends) and **`backend/`** (Strapi). **One Strapi app** (workspace `ledgeria-api` in folder **`backend/`**) serves the **portfolio** site, **admin** console, and **Ledgeria** issue ingestion. Strapi Cloud: set the repo **base directory** to **`backend`**.
+**npm workspaces:** `apps/portfolio-web` and **`backend/`** (portfolio Strapi). **Ledgeria API + admin dashboard** live in the sibling **mustidev** monorepo (`apps/ledgeria-api`, `apps/dashboard`). Strapi Cloud (legacy shared instance): base directory **`backend`** until Ledgeria is deployed separately.
 
 ```
 mustafaturkyilmaz/
 ├── apps/
 │   ├── portfolio-web/   # Next.js 16 — public portfolio (reads Strapi)
-│   ├── admin-web/       # Next.js 16 — internal admin
+│   ├── admin-web/       # Pointer → mustidev/apps/dashboard
 │   └── README.md
-├── backend/             # Strapi 5 — shared API (portfolio CMS + Ledgeria + REST)
+├── backend/             # Strapi 5 — portfolio CMS only
 ├── ledgeria/            # Ledgeria product notes (cross-app)
 ├── packages/            # Reserved for future shared packages (not a workspace yet)
 └── package.json         # workspaces: ["apps/*", "backend"]
 ```
 
-## Architecture (single backend)
+## Architecture
 
 | Layer | Location | Role |
 |-------|----------|------|
-| Backend | **`backend/`** (`ledgeria-api`) | Strapi: portfolio content types, media, `ledgeria-issue`, custom HTTP for Ledgeria client. |
-| Frontends | **`apps/portfolio-web`**, **`apps/admin-web`** | Next.js; both use `NEXT_PUBLIC_STRAPI_URL` → the same Strapi instance. |
-
-Future shared TypeScript (e.g. API types) can live under `packages/` when needed; data stays in one Strapi project.
+| Portfolio backend | **`backend/`** (`ledgeria-api` workspace name) | Strapi: About, Project, Skill |
+| Portfolio site | **`apps/portfolio-web`** | Next.js public site |
+| Ledgeria API | **`mustidev/apps/ledgeria-api`** | Issues, licensing, customers |
+| Product dashboard | **`mustidev/apps/dashboard`** | Ledgeria admin UI (port 3002) |
 
 ## Install
 
@@ -35,15 +35,14 @@ npm install
 
 | Command | What it does |
 |---------|----------------|
-| `npm run dev` | Strapi + portfolio + admin together |
-| `npm run dev:ledgeria-api` | Only Strapi (`backend/`, workspace `ledgeria-api`) |
-| `npm run dev:backend` | Same as `dev:ledgeria-api` (Strapi in `backend/`) |
+| `npm run dev` | Strapi + portfolio together |
+| `npm run dev:ledgeria-api` | Only portfolio Strapi (`backend/`) |
+| `npm run dev:backend` | Same as `dev:ledgeria-api` |
 | `npm run dev:portfolio` | Only portfolio (`apps/portfolio-web`, port **3000**) |
-| `npm run dev:admin` | Only admin (`apps/admin-web`, port **3002**) |
 
 You can also `cd backend && npm run develop` or `cd apps/portfolio-web && npm run dev`.
 
-Default URLs: Strapi API **https://timely-spirit-9e046731e1.strapiapp.com** (override with `NEXT_PUBLIC_STRAPI_URL`), portfolio **http://localhost:3000**, admin **http://localhost:3002**. Local Strapi in `backend/` is optional.
+Default URLs: Strapi API **https://timely-spirit-9e046731e1.strapiapp.com** (override with `NEXT_PUBLIC_STRAPI_URL`), portfolio **http://localhost:3000**. Ledgeria admin: `cd ../mustidev && npm run dashboard:dev` (**http://localhost:3002**).
 
 ---
 
@@ -78,19 +77,15 @@ Schemas: `backend/src/api/<name>/content-types/<name>/schema.json`.
 
 ---
 
-## Ledgeria (desktop product slice)
+## Ledgeria (moved to Mustidev)
 
 | Piece | Location |
 |-------|----------|
-| HTTP ingestion | `backend/src/ledgeria/issue-ingestion.ts` |
-| Strapi collections | `backend/src/api/ledgeria-issue/`, `ledgeria-customer/`, `ledgeria-edition/`, `ledgeria-license/` |
-| Edition seed | `backend/src/ledgeria/seed-editions.ts` |
-| Issues + license admin | **http://localhost:3002** — `apps/admin-web` |
+| Strapi API | **`mustidev/apps/ledgeria-api`** |
+| Admin dashboard | **`mustidev/apps/dashboard`** |
+| Product notes | **`ledgeria/README.md`** (this repo) |
 
-More: **`ledgeria/README.md`**, **`ledgeria/CUSTOMER-LICENSING.md`**, **`backend/src/ledgeria/README.md`**, **`apps/admin-web/README.md`**.
-
-- Optional: **`LEDGERIA_ISSUES_API_KEY`** in `backend/.env`.
-- Admin: **`STRAPI_API_TOKEN`** + **`NEXT_PUBLIC_STRAPI_URL`** in `apps/admin-web/.env.local`; license keys via **Lisans anahtarları** UI or `LEDGERIA_LICENSE_*` (see `apps/admin-web/.env.example`).
+More: **`ledgeria/CUSTOMER-LICENSING.md`**, **`mustidev/apps/dashboard/README.md`**.
 
 ---
 

@@ -2,7 +2,7 @@
   "name": "ledgeria-api",
   "version": "0.1.0",
   "private": true,
-  "description": "Strapi 5 — shared backend: portfolio CMS + Ledgeria issues + custom HTTP routes",
+  "description": "Strapi 5 — portfolio CMS (Ledgeria API moved to mustidev/apps/ledgeria-api)",
   "scripts": {
     "build": "strapi build",
     "console": "strapi console",

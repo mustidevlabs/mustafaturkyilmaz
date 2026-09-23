@@ -1,16 +1,16 @@
 # Ledgeria in this monorepo
 
-**Ledgeria** (desktop app feedback) uses the **same Strapi backend** as the portfolio (`backend/`, workspace **`ledgeria-api`**). The public portfolio site does not host Ledgeria admin UI; triage lives in **admin-web**.
+**Ledgeria** product code and admin have moved to the **Mustidev** monorepo. This folder keeps cross-repo notes and licensing docs.
 
 | Area | Path |
 |------|------|
-| Strapi (shared backend + CMS) | `backend/` — workspace **`ledgeria-api`** |
-| Public portfolio | `apps/portfolio-web/` — workspace **`portfolio-web`** |
-| Internal admin (issues + licensing) | `apps/admin-web/` — workspace **`admin-web`** (e.g. **http://localhost:3002**) |
-| Cross-app notes | This folder (`ledgeria/README.md`) |
+| Strapi API (issues, licensing) | `mustidev/apps/ledgeria-api` |
+| Admin dashboard | `mustidev/apps/dashboard` (port **3002**) |
+| Public portfolio | `apps/portfolio-web/` (this repo) |
+| Portfolio CMS Strapi | `backend/` (this repo) |
 
-### Licensing (vendor control plane)
+### Licensing
 
-Admin-web signs `SignedLicense` JSON (Ed25519) for the desktop app (`feat/customer-licensing`). Strapi stores customers, edition templates, and license history. Keys: UI at `/ledgeria/settings/license-keys` (encrypted `.data/`) or `LEDGERIA_LICENSE_PRIVATE_KEY_PKCS8_B64` in `apps/admin-web/.env.local` only.
+Dashboard signs `SignedLicense` JSON (Ed25519) for the desktop app. Strapi stores customers, editions, and license history. Keys: UI at `/ledgeria/settings/license-keys` or env in `mustidev/apps/dashboard/.env.local`.
 
-See root **README.md**, `apps/admin-web/README.md`, and [`CUSTOMER-LICENSING.md`](./CUSTOMER-LICENSING.md) (masaüstü sözleşme: sibling Ledgeria `docs/product/tr/CUSTOMER-LICENSING.md`).
+See [`CUSTOMER-LICENSING.md`](./CUSTOMER-LICENSING.md) and `mustidev/apps/dashboard/README.md`.
