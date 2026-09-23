@@ -2,22 +2,20 @@
   "name": "mustafaturkyilmaz",
   "version": "0.1.0",
   "private": true,
-  "description": "Monorepo: shared Strapi backend + portfolio + admin + Ledgeria routes",
+  "description": "Monorepo: shared Strapi backend + portfolio (admin dashboard moved to mustidev/apps/dashboard)",
   "workspaces": [
     "apps/*",
     "backend"
   ],
   "scripts": {
-    "dev": "concurrently -n ledgeria-api,portfolio,admin -c blue,magenta,green \"npm run dev -w ledgeria-api\" \"npm run dev -w portfolio-web\" \"npm run dev -w admin-web\"",
+    "dev": "concurrently -n ledgeria-api,portfolio -c blue,magenta \"npm run dev -w ledgeria-api\" \"npm run dev -w portfolio-web\"",
     "dev:ledgeria-api": "npm run dev -w ledgeria-api",
     "dev:backend": "npm run dev -w ledgeria-api",
     "dev:portfolio": "npm run dev -w portfolio-web",
-    "dev:admin": "npm run dev -w admin-web",
-    "build": "npm run build -w ledgeria-api && npm run build -w portfolio-web && npm run build -w admin-web",
-    "start": "concurrently -n ledgeria-api,portfolio,admin -c blue,magenta,green \"npm run start -w ledgeria-api\" \"npm run start -w portfolio-web\" \"npm run start -w admin-web\"",
+    "build": "npm run build -w ledgeria-api && npm run build -w portfolio-web",
+    "start": "concurrently -n ledgeria-api,portfolio -c blue,magenta \"npm run start -w ledgeria-api\" \"npm run start -w portfolio-web\"",
     "start:ledgeria-api": "npm run start -w ledgeria-api",
     "start:portfolio": "npm run start -w portfolio-web",
-    "start:admin": "npm run start -w admin-web",
     "check:strapi": "node scripts/check-strapi-cloud.mjs",
     "backup:strapi-code": "bash scripts/backup-backend-for-strapi-reset.sh",
     "backup:strapi-export": "bash scripts/strapi-export-to-backups.sh"
